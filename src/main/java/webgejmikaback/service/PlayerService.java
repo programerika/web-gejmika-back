@@ -53,6 +53,6 @@ public class PlayerService {
 
     private List<Integer> reversedList(List<Integer> list) {
         return list.stream().sorted(Collections.reverseOrder())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()).stream().limit(3).collect(Collectors.toList());
     }
 }
