@@ -1,9 +1,8 @@
 package webgejmikaback.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import webgejmikaback.Model.PlayerScore;
-import webgejmikaback.Repository.PlayerRepository;
+import webgejmikaback.service.PlayerService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,56 +11,42 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api")
 public class ScoreController {
 
-    @Autowired
-    PlayerRepository playerRepository;
+    private final PlayerService playerService;
 
-    @RequestMapping(value = "/savePlayer",method = RequestMethod.GET)
-    public String saveScore() {
-        // 21 21 21 13 8
-        PlayerScore ps = new PlayerScore("Nata", Arrays.asList(13,8,13,13,21,13,21));
-        PlayerScore ps1 = new PlayerScore("Pera", Arrays.asList(13,8,8,13,0,21));
-        PlayerScore ps2 = new PlayerScore("Bane", Arrays.asList(13,8,13,13,21,8,21,21));
-        playerRepository.saveAll(Arrays.asList(ps,ps1,ps2));
-        return "Players have been successfully saved";
+    public ScoreController(PlayerService playerService) {
+        this.playerService = playerService;
     }
 
-    @RequestMapping(value = "/deletescores", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/saveAllScores",method = RequestMethod.GET)
+    public String saveAllScores() {
+        playerService.saveAllScores();
+        return "All Scores have been successfully saved";
+    }
+
+    @RequestMapping(value = "/deleteAllScores", method = RequestMethod.DELETE)
     public String deleteAllScores() {
-        playerRepository.deleteAll();
+        playerService.deleteAllScores();
         return "All scores have been deleted";
     }
 
-    @RequestMapping(value = "/getallscores", method = RequestMethod.GET)
+    @RequestMapping(value = "/getAllScores", method = RequestMethod.GET)
     public List<PlayerScore> getAllScores() {
-        return playerRepository.findAll();
+        return playerService.getAllScores();
     }
 
-    @RequestMapping(value = "/getplayerbyusername", method = RequestMethod.GET)
-    public Object getPlayerByUserName(@RequestHeader(name = "username") String username) {
-        try{
-            if(playerRepository.findById(username).isPresent()){
-                return playerRepository.findById(username);
-            }else{
-                throw new Exception();
-            }
-        }catch (Exception e){
-            return "Player with name " + username + " not found";
-        }
+    @RequestMapping(value = "/getPlayerByUsername", method = RequestMethod.GET)
+    public Optional<PlayerScore> getPlayerByUserName(@RequestHeader(name = "username") String username) {
+        return playerService.getPlayerByUserName(username);
     }
 
-    @RequestMapping(value = "/uploadscore", method = RequestMethod.POST)
-    public String createScore(@RequestBody PlayerScore playerScore) {
-        playerRepository.save(playerScore);
-        return "Player score has been added.";
+    @RequestMapping(value = "/saveScore", method = RequestMethod.POST)
+    public PlayerScore saveScore(@RequestBody PlayerScore playerScore) {
+        return playerService.saveScore(playerScore);
     }
 
-    @RequestMapping(value = "/gettopten",method = RequestMethod.GET)
-    public Object top10PlaysPerPlayer(@RequestHeader(name = "username") String username) {
-        try {
-            return playerRepository.findById(username).get().getScore().stream().sorted(Comparator.reverseOrder()).limit(10).collect(Collectors.toList());
-        } catch (Exception e) {
-            return "Player with name " + username + " not found";
-        }
+    @RequestMapping(value = "/topTenById",method = RequestMethod.GET)
+    public Optional<PlayerScore> getTopTenById(@RequestHeader(name = "username") String username) {
+        return playerService.getTopTenById(username);
     }
 
 }
