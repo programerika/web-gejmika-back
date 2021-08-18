@@ -1,25 +1,30 @@
 package webgejmikaback.service;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import webgejmikaback.Model.PlayerScore;
 import webgejmikaback.Repository.PlayerRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
 
-    private final PlayerRepository playerRepository;
 
-    public PlayerService(PlayerRepository playerRepository) {
+    private final PlayerRepository playerRepository;
+    private final MongoTemplate mongoTemplate;
+
+    public PlayerService(PlayerRepository playerRepository, MongoTemplate mongoTemplate) {
         this.playerRepository = playerRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     public String saveAllScores() {
-        PlayerScore ps = new PlayerScore("Nata", Arrays.asList(13,8,13,13,21,13,21));
-        PlayerScore ps1 = new PlayerScore("Pera", Arrays.asList(13,8,8,13,0,21));
-        PlayerScore ps2 = new PlayerScore("Bane", Arrays.asList(13,8,13,13,21,8,21,21));
+        PlayerScore ps = new PlayerScore("Nata", 21);
+        PlayerScore ps1 = new PlayerScore("Pera", 15);
+        PlayerScore ps2 = new PlayerScore("Bane", 21);
         playerRepository.saveAll(Arrays.asList(ps,ps1,ps2));
         return "All Scores have been successfully saved";
     }
@@ -44,15 +49,11 @@ public class PlayerService {
        throw new RuntimeException("Player score cannot be null");
     }
 
-    // need to be done again
-    public Optional<PlayerScore> getTopTenById(String username) {
-        Optional<PlayerScore> playerScore = playerRepository.findById(username);
-        playerScore.ifPresent(ps -> reversedList(ps.getScore()));
-        return playerScore;
+    public List<PlayerScore> getTopTenScores(){
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.DESC,"score")).limit(10);
+        return mongoTemplate.find(query,PlayerScore.class);
+        //return playerRepository.findAll().stream().sorted(Comparator.comparingInt(PlayerScore::getScore)).limit(10).collect(Collectors.toList());
     }
 
-    private List<Integer> reversedList(List<Integer> list) {
-        return list.stream().sorted(Collections.reverseOrder())
-                .collect(Collectors.toList()).stream().limit(3).collect(Collectors.toList());
-    }
 }

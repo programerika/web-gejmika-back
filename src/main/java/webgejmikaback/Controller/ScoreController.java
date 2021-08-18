@@ -44,9 +44,9 @@ public class ScoreController {
         return playerService.saveScore(playerScore);
     }
 
-    @RequestMapping(value = "/topTenById",method = RequestMethod.GET)
-    public Optional<PlayerScore> getTopTenById(@RequestHeader(name = "username") String username) {
-        return playerService.getTopTenById(username);
+    @RequestMapping(value = "/getTopTenScores", method = RequestMethod.GET)
+    public List<PlayerScore> getTopTenScores() {
+        return playerService.getTopTenScores();
     }
 
 }

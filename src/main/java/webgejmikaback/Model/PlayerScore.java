@@ -13,9 +13,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "scores")
+@Document(collection = "all-scores")
 public class PlayerScore {
     @Id
     private String username;
-    private List<Integer> score;
+    private Integer score;
 }
