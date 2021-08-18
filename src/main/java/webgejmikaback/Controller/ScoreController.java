@@ -1,14 +1,18 @@
 package webgejmikaback.Controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 import webgejmikaback.Model.PlayerScore;
-import webgejmikaback.service.PlayerService;
+import webgejmikaback.Service.PlayerService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/v1/playerScore")
 public class ScoreController {
 
     private final PlayerService playerService;
@@ -17,33 +21,80 @@ public class ScoreController {
         this.playerService = playerService;
     }
 
-    @RequestMapping(value = "/saveAllScores",method = RequestMethod.GET)
+    @Operation(summary = "Saves multiple scores", description = "Provide list of players")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200",
+                     description = "Scores are saved",
+                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+    })
+    @RequestMapping(value = "/saveAllScores",method = RequestMethod.POST)
     public String saveAllScores() {
         playerService.saveAllScores();
         return "All Scores have been successfully saved";
     }
 
+    @Operation(summary = "Delete all scores", description = "It deletes all scores from all-scores collection")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Scores are deleted",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+    })
     @RequestMapping(value = "/deleteAllScores", method = RequestMethod.DELETE)
     public String deleteAllScores() {
         playerService.deleteAllScores();
         return "All scores have been deleted";
     }
 
+    @Operation(summary = "Get all scores", description = "It gets all scores that are saved in all-scores collection")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "All scores",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+    })
     @RequestMapping(value = "/getAllScores", method = RequestMethod.GET)
     public List<PlayerScore> getAllScores() {
         return playerService.getAllScores();
     }
 
+    @Operation(summary = "Get player by user name", description = "Provide username to get player with score from all-scores collection")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Player with score",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+    })
     @RequestMapping(value = "/getPlayerByUsername", method = RequestMethod.GET)
     public Optional<PlayerScore> getPlayerByUserName(@RequestHeader(name = "username") String username) {
         return playerService.getPlayerByUserName(username);
     }
 
+    @Operation(summary = "Save score", description = "Provide new player")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Score is saved",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+    })
     @RequestMapping(value = "/saveScore", method = RequestMethod.POST)
     public PlayerScore saveScore(@RequestBody PlayerScore playerScore) {
         return playerService.saveScore(playerScore);
     }
 
+    @Operation(summary = "Update score", description = "Provide a new score to update the old one")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Score is updated",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+    })
+    @RequestMapping(value = "/updateScore", method = RequestMethod.PUT)
+    public Optional<PlayerScore> updateScore(@RequestBody PlayerScore playerScore) {
+        return playerService.updateScore(playerScore);
+    }
+
+    @Operation(summary = "Top ten players", description = "Method gets top ten players")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Top ten players",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+    })
     @RequestMapping(value = "/getTopTenScores", method = RequestMethod.GET)
     public List<PlayerScore> getTopTenScores() {
         return playerService.getTopTenScores();

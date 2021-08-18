@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import webgejmikaback.Model.PlayerScore;
 
 @Repository
-public interface PlayerRepository extends MongoRepository<PlayerScore,String> {
+public interface PlayerRepository extends MongoRepository<PlayerScore,String>, PlayerScoreRepository {
 
 }
