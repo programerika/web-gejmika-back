@@ -3,6 +3,7 @@ package webgejmikaback.Service;
 import org.springframework.stereotype.Service;
 import webgejmikaback.Model.PlayerScore;
 import webgejmikaback.Repository.PlayerRepository;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -49,24 +50,42 @@ public class PlayerService {
         return playerRepository.findById(id);
     }
 
-    public PlayerScore saveScore(PlayerScore playerScore) {
-       if (playerScore.getUsername() != null) {
-           return playerRepository.save(playerScore);
-       }
-       throw new RuntimeException("Player score cannot be null");
-    }
-
-    public Optional<PlayerScore> updateScore(PlayerScore newPlayerScore) {
-        Optional<PlayerScore> playerScore = playerRepository.findById(newPlayerScore.getUsername());
-        if (newPlayerScore.getUsername() != null) {
-            playerScore.ifPresent(p -> p.setUsername(newPlayerScore.getUsername()));
-            playerScore.ifPresent(p -> p.setScore(p.getScore() + newPlayerScore.getScore()));
-            playerScore.ifPresent(playerRepository::save);
-
-            return playerScore;
+    public void saveScore(PlayerScore playerScore) {
+        Optional<PlayerScore> optionalPlayerScore = playerRepository.findById(playerScore.getUsername());
+        if (optionalPlayerScore.isPresent()) {
+            optionalPlayerScore.ifPresent(p -> p.setUsername(playerScore.getUsername()));
+            optionalPlayerScore.ifPresent(p -> p.setScore(p.getScore() + playerScore.getScore()));
+            optionalPlayerScore.ifPresent(playerRepository::save);
+        } else {
+            // proveriti sa vladom da li zeli da se upisuju igraci bez imena u bazu
+            try {
+                if (playerScore.getUsername().isBlank()) {
+                    throw new NullPointerException("Username cannot be empty!");
+                }
+                playerRepository.save(playerScore);
+            } catch (NullPointerException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        throw new RuntimeException("Player score cannot be null");
     }
+//    public PlayerScore saveScore(PlayerScore playerScore) {
+//       if (playerScore.getUsername() != null) {
+//           return playerRepository.save(playerScore);
+//       }
+//       throw new RuntimeException("Player score cannot be null");
+//    }
+
+//    public Optional<PlayerScore> updateScore(PlayerScore newPlayerScore) {
+//        Optional<PlayerScore> playerScore = playerRepository.findById(newPlayerScore.getUsername());
+//        if (newPlayerScore.getUsername() != null) {
+//            playerScore.ifPresent(p -> p.setUsername(newPlayerScore.getUsername()));
+//            playerScore.ifPresent(p -> p.setScore(p.getScore() + newPlayerScore.getScore()));
+//            playerScore.ifPresent(playerRepository::save);
+//
+//            return playerScore;
+//        }
+//        throw new RuntimeException("Player score cannot be null");
+//    }
 
     public List<PlayerScore> getTopTenScores(){
         return playerRepository.getTopTenScores();
