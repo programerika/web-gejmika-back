@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import webgejmikaback.Model.PlayerScore;
 import webgejmikaback.Service.PlayerService;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -25,7 +26,10 @@ public class ScoreController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200",
                      description = "Scores are saved",
-                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+        @ApiResponse(responseCode = "400",
+                    description = "Bad request",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "/save-all-scores",method = RequestMethod.POST)
     public String saveAllScores() {
@@ -37,6 +41,9 @@ public class ScoreController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Scores are deleted",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad request",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "/delete-all-scores", method = RequestMethod.DELETE)
@@ -49,6 +56,9 @@ public class ScoreController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "All scores",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad request",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "/all-scores", method = RequestMethod.GET)
@@ -60,6 +70,9 @@ public class ScoreController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Player with score",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad request",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
@@ -82,10 +95,13 @@ public class ScoreController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "New score is saved",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad request",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public void saveScore(@RequestBody PlayerScore playerScore) {
+    public void saveScore(@Valid @RequestBody PlayerScore playerScore) {
         playerService.saveScore(playerScore);
     }
 
@@ -104,6 +120,9 @@ public class ScoreController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Top ten players",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad request",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "/top-score", method = RequestMethod.GET)
