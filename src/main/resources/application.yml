@@ -3,7 +3,7 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: web_gejmika_db
+      database: webGejmikaDB
 springdoc:
   api-docs:
     path: /api-docs
