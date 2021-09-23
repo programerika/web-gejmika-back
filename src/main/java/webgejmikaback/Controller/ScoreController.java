@@ -49,7 +49,7 @@ public class ScoreController {
     @RequestMapping(value = "/delete-all-scores", method = RequestMethod.DELETE)
     public String deleteAll() {
         playerService.deleteAll();
-        return "All scores have been deleted";
+        return "All scores deleted";
     }
 
     @Operation(summary = "Get all scores", description = "It gets all scores that are saved in all-scores collection")

@@ -39,7 +39,7 @@ public class PlayerService {
 
     public String deleteAll() {
         playerRepository.deleteAll();
-        return "All scores have been deleted";
+        return "All scores deleted";
     }
 
     public List<Player> getAll() {
