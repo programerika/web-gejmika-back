@@ -48,7 +48,7 @@ public class PlayerService {
     }
 
     public List<Player> getAll() {
-        return playerRepository.findAll();
+        return playerRepository.getAll();
     }
 
     public Optional<Player> getPlayerByUsername(String id) {

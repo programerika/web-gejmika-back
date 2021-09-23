@@ -23,4 +23,11 @@ public class PlayerScoreRepositoryImpl implements PlayerScoreRepository {
         query.with(Sort.by(Sort.Direction.DESC,"score")).limit(10);
         return mongoTemplate.find(query, Player.class);
     }
+
+    @Override
+    public List<Player> getAll() {
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.DESC,"score"));
+        return mongoTemplate.find(query, Player.class);
+    }
 }
