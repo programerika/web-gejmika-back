@@ -16,8 +16,7 @@ import javax.validation.constraints.Pattern;
 @Document(collection = "scores")
 public class Player {
     @Id
-    @Pattern(regexp = "[a-zA-Z]{4}\\d{2}", message = "Username must start with 4 letters followed by 2 digits")
-//    @Pattern(regexp = "[a-zA-Z0-9]*", message = "Username must consist of 4 letters and 4 digits and no special characters")
+    @Pattern(regexp = "(?i)[a-z]{4,6}[0-9]{2}", message = "Username must start with min 4 and max 6 letters, followed by 2 digits")
     private String username;
     private Integer score;
 }
