@@ -37,6 +37,11 @@ public class PlayerService {
         return "All Scores have been successfully saved";
     }
 
+    public String delete(String id) {
+        playerRepository.deleteById(id);
+        return "Score is deleted";
+    }
+
     public String deleteAll() {
         playerRepository.deleteAll();
         return "All scores deleted";

@@ -37,6 +37,12 @@ public class ScoreController {
         return "All Scores have been successfully saved";
     }
 
+    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
+    public String delete(@RequestParam(name = "username") String username) {
+        playerService.delete(username);
+        return "Score is deleted";
+    }
+
     @Operation(summary = "Delete all scores", description = "It deletes all scores from all-scores collection")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
