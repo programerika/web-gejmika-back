@@ -86,17 +86,6 @@ public class ScoreController {
         return playerService.getPlayerByUsername(username);
     }
 
-//    @Operation(summary = "Save score", description = "Provide new player")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200",
-//                    description = "Score is saved",
-//                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))})
-//    })
-//    @RequestMapping(value = "/saveScore", method = RequestMethod.POST)
-//    public Player saveScore(@RequestBody Player player) {
-//        return playerService.saveScore(player);
-//    }
-
     @Operation(summary = "Save or update player score", description = "Provide username and score to save the new player or update the existing one")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -110,17 +99,6 @@ public class ScoreController {
     public void saveScore(@Valid @RequestBody Player player) {
         playerService.saveScore(player);
     }
-
-//    @Operation(summary = "Update score", description = "Provide a new score to update the old one")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200",
-//                    description = "Score is updated",
-//                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
-//    })
-//    @RequestMapping(value = "/updateScore", method = RequestMethod.PUT)
-//    public Optional<Player> updateScore(@RequestBody Player player) {
-//        return playerService.updateScore(player);
-//    }
 
     @Operation(summary = "Top ten players", description = "Method gets top ten players")
     @ApiResponses(value = {

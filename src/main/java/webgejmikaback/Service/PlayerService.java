@@ -73,24 +73,6 @@ public class PlayerService {
             }
         }
     }
-//    public Player saveScore(Player player) {
-//       if (player.getUsername() != null) {
-//           return playerRepository.save(player);
-//       }
-//       throw new RuntimeException("Player score cannot be null");
-//    }
-//
-//    public Optional<Player> updateScore(Player newPlayerScore) {
-//        Optional<Player> playerScore = playerRepository.findById(newPlayerScore.getUsername());
-//        if (newPlayerScore.getUsername() != null) {
-//            playerScore.ifPresent(p -> p.setUsername(newPlayerScore.getUsername()));
-//            playerScore.ifPresent(p -> p.setScore(p.getScore() + newPlayerScore.getScore()));
-//            playerScore.ifPresent(playerRepository::save);
-//
-//            return playerScore;
-//        }
-//        throw new RuntimeException("Player score cannot be null");
-//    }
 
     public List<Player> getTopTen(){
         return playerRepository.getTopTen();
