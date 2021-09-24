@@ -2,6 +2,7 @@ package webgejmikaback.Service;
 
 import org.springframework.stereotype.Service;
 import webgejmikaback.Model.Player;
+import webgejmikaback.Model.PlayerDTO;
 import webgejmikaback.Repository.PlayerRepository;
 
 import java.util.*;
@@ -51,6 +52,10 @@ public class PlayerService {
         return playerRepository.getAll();
     }
 
+    public List<PlayerDTO> getAllRanked() {
+        return playerRepository.getAllRanked();
+    }
+
     public Optional<Player> getPlayerByUsername(String id) {
         return playerRepository.findById(id);
     }
@@ -73,27 +78,27 @@ public class PlayerService {
             }
         }
     }
-//    public Player saveScore(Player player) {
-//       if (player.getUsername() != null) {
-//           return playerRepository.save(player);
-//       }
-//       throw new RuntimeException("Player score cannot be null");
-//    }
-//
-//    public Optional<Player> updateScore(Player newPlayerScore) {
-//        Optional<Player> playerScore = playerRepository.findById(newPlayerScore.getUsername());
-//        if (newPlayerScore.getUsername() != null) {
-//            playerScore.ifPresent(p -> p.setUsername(newPlayerScore.getUsername()));
-//            playerScore.ifPresent(p -> p.setScore(p.getScore() + newPlayerScore.getScore()));
-//            playerScore.ifPresent(playerRepository::save);
-//
-//            return playerScore;
-//        }
-//        throw new RuntimeException("Player score cannot be null");
-//    }
 
-    public List<Player> getTopTen(){
-        return playerRepository.getTopTen();
+    public List<PlayerDTO> getTopTenRanked() {
+        return playerRepository.getTopTenRanked();
+    }
+
+    public PlayerDTO getRankedScore(String username) {
+        return playerRepository.getRankedScore(username);
+    }
+
+    public List<PlayerDTO> getTopTen(String username){
+        PlayerDTO player = playerRepository.getRankedScore(username);
+        List<PlayerDTO> playerDTOList;
+        if (player.getPlaceNo() <= 10) {
+            playerDTOList = playerRepository.getTopTenRanked();
+        }
+        else {
+            PlayerDTO playerDTO = playerRepository.getRankedScore(username);
+            playerDTOList = playerRepository.getTopTenRanked();
+            playerDTOList.add(playerDTO);
+        }
+        return playerDTOList;
     }
 
 }
