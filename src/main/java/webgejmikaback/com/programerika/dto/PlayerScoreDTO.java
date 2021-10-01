@@ -1,16 +1,17 @@
-package webgejmikaback.Model;
+package webgejmikaback.com.programerika.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerDTO {
-    private int placeNo;
-    private String username;
-    private int score;
+public class PlayerScoreDTO {
+    private UUID id;
+
 }

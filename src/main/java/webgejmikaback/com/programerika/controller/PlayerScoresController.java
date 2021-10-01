@@ -1,4 +1,4 @@
-package webgejmikaback.Controller;
+package webgejmikaback.com.programerika.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
-import webgejmikaback.Model.Player;
-import webgejmikaback.Model.PlayerDTO;
-import webgejmikaback.Service.PlayerService;
+import webgejmikaback.com.programerika.model.PlayerScore;
+import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
+import webgejmikaback.com.programerika.service.PlayerService;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -34,7 +34,7 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     // path variabla i response 204
     @RequestMapping(value = "player-scores/{uid}", method = RequestMethod.DELETE)
@@ -48,14 +48,14 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Success",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))}),
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{username}", method = RequestMethod.GET)
-    public Optional<Player> getPlayerByUserName(@PathVariable(name = "username") String username) {
+    public Optional<PlayerScore> getPlayerByUserName(@PathVariable(name = "username") String username) {
         return playerService.getPlayerByUsername(username);
     }
 
@@ -64,16 +64,16 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "201",
                     description = "Created",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))},
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))},
                     headers = {@Header(name = "Location")}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
-    public void playerScore(@Valid @RequestBody Player player) {
-        playerService.saveScore(player);
+    public void playerScore(@Valid @RequestBody PlayerScore playerScore) {
+        playerService.saveScore(playerScore);
     }
 
     @Operation(summary = "Add player score", description = "Provide username and new score to add score to existing one")
@@ -86,11 +86,11 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     // ubaciti path variablu za username
     @RequestMapping(value = "player-scores/{username}/add-score", method = RequestMethod.POST)
-    public void addScore(@RequestBody Player player) {
+    public void addScore(@RequestBody PlayerScore playerScore) {
 
     }
 
@@ -99,14 +99,14 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Success",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))}),
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Player.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "top-score", method = RequestMethod.GET)
-    public List<PlayerDTO> getTopScore() {
+    public List<PlayerScoreDTO> getTopScore() {
         return playerService.getTopTenRanked();
     }
 
