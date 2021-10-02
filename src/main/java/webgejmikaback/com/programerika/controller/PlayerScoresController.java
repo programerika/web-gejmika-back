@@ -6,11 +6,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.service.PlayerScoresService;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @RestController
@@ -63,16 +67,16 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "201",
                     description = "Created",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))},
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))},
                     headers = {@Header(name = "Location")}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
-    public void playerScore(@Valid @RequestBody PlayerScore playerScore) {
-        playerScoresService.saveScore(playerScore);
+    public PlayerScoreDTO playerScore(@Valid @RequestBody PlayerScore playerScore) {
+        return playerScoresService.savePlayerScore(playerScore);
     }
 
     @Operation(summary = "Add player score", description = "Provide username and new score to add score to existing one")

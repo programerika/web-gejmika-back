@@ -8,5 +8,5 @@ import javax.validation.constraints.Pattern;
 
 @Repository
 public interface PlayerScoresRepository extends MongoRepository<PlayerScore,String>, PlayerScoreRepositoryTopScore {
-
+    PlayerScore findByUsername(String username);
 }

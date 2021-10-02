@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+
 import webgejmikaback.com.programerika.model.PlayerScore;
 
 import java.util.List;
@@ -25,13 +26,6 @@ public class PlayerScoreRepositoryTopScoreImpl implements PlayerScoreRepositoryT
         Query query = new Query();
         query.with(Sort.by(Sort.Direction.DESC,"score")).limit(limit);
         return mongoTemplate.find(query, PlayerScore.class);
-    }
-
-    @Override
-    public PlayerScore findByUsername(String username) {
-        Query q = new Query();
-        q.fields().include("username");
-        return (PlayerScore) mongoTemplate.find(q, PlayerScore.class);
     }
 
 }
