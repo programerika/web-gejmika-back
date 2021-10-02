@@ -21,13 +21,12 @@ public class PlayerScoresService {
         this.playerScoresConverter = playerScoresConverter;
     }
 
-    public String delete(String id) {
-        playerScoresRepository.deleteById(id);
-        return "Score is deleted";
+    public void delete(String uid) {
+        playerScoresRepository.deleteById(uid);
     }
 
-    public Optional<PlayerScore> getPlayerByUsername(String id) {
-        return playerScoresRepository.findById(id);
+    public PlayerScore getPlayerByUsername(String username) {
+        return playerScoresRepository.findByUsername(username);
     }
 
     public PlayerScoreDTO savePlayerScore(PlayerScore playerScore) {
