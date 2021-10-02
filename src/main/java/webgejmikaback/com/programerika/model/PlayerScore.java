@@ -17,8 +17,8 @@ import java.util.UUID;
 @Document(collection = "scores")
 public class PlayerScore {
     @Id
+    private String uid;
     @Pattern(regexp = "(?i)[a-z]{4,6}[0-9]{2}", message = "Username must start with min 4 and max 6 letters, followed by 2 digits")
     private String username;
-    private UUID id;
     private Integer score;
 }

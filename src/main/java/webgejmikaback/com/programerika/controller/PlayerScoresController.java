@@ -8,8 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 import webgejmikaback.com.programerika.model.PlayerScore;
-import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
-import webgejmikaback.com.programerika.service.PlayerService;
+import webgejmikaback.com.programerika.service.PlayerScoresService;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -18,10 +17,10 @@ import java.util.*;
 @RequestMapping(value = "/api/v1/")
 public class PlayerScoresController {
 
-    private final PlayerService playerService;
+    private final PlayerScoresService playerScoresService;
 
-    public PlayerScoresController(PlayerService playerService) {
-        this.playerService = playerService;
+    public PlayerScoresController(PlayerScoresService playerScoresService) {
+        this.playerScoresService = playerScoresService;
     }
 
     @Operation(summary = "Delete score by uid", description = "It deletes player's score from all-scores collection.")
@@ -39,7 +38,7 @@ public class PlayerScoresController {
     // path variabla i response 204
     @RequestMapping(value = "player-scores/{uid}", method = RequestMethod.DELETE)
     public String delete(@PathVariable(name = "username") String username) {
-        playerService.delete(username);
+        playerScoresService.delete(username);
         return "Score is deleted";
     }
 
@@ -56,7 +55,7 @@ public class PlayerScoresController {
     })
     @RequestMapping(value = "player-scores/{username}", method = RequestMethod.GET)
     public Optional<PlayerScore> getPlayerByUserName(@PathVariable(name = "username") String username) {
-        return playerService.getPlayerByUsername(username);
+        return playerScoresService.getPlayerByUsername(username);
     }
 
     @Operation(summary = "Save player score", description = "Provide username and score to save the new player's score")
@@ -73,7 +72,7 @@ public class PlayerScoresController {
     })
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
     public void playerScore(@Valid @RequestBody PlayerScore playerScore) {
-        playerService.saveScore(playerScore);
+        playerScoresService.saveScore(playerScore);
     }
 
     @Operation(summary = "Add player score", description = "Provide username and new score to add score to existing one")
@@ -106,8 +105,8 @@ public class PlayerScoresController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "top-score", method = RequestMethod.GET)
-    public List<PlayerScoreDTO> getTopScore() {
-        return playerService.getTopTenRanked();
+    public List<PlayerScore> getTopScore() {
+        return playerScoresService.getTopScore();
     }
 
 }

@@ -15,3 +15,6 @@ management:
     web:
       exposure:
         include: "*"
+
+top-scores-limit:
+  number: 4
