@@ -22,7 +22,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.*;
 
-@CrossOrigin(origins = "http://locahost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(value = "/api/v1/")
 public class PlayerScoresController {
