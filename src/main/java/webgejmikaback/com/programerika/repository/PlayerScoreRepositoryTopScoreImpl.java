@@ -13,9 +13,10 @@ import java.util.List;
 @Repository
 public class PlayerScoreRepositoryTopScoreImpl implements PlayerScoreRepositoryTopScore {
 
-    private final MongoTemplate mongoTemplate;
     @Value("${top-scores-limit.number}")
     public int limit;
+
+    private final MongoTemplate mongoTemplate;
 
     public PlayerScoreRepositoryTopScoreImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;

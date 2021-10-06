@@ -1,5 +1,6 @@
 package webgejmikaback.com.programerika.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,10 @@ import javax.validation.constraints.Pattern;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "ttt")
+@Document(collection = "lll")
 public class PlayerScore {
     @Id
+    @JsonIgnore
     private String uid;
     @Pattern(regexp = "(?i)[a-z]{4,6}[0-9]{2}", message = "Username must start with min 4 and max 6 letters, followed by 2 digits")
     private String username;

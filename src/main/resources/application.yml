@@ -4,6 +4,7 @@ spring:
       host: localhost
       port: 27017
       database: webGejmikaDB
+
 springdoc:
   api-docs:
     path: /api-docs
@@ -17,4 +18,5 @@ management:
         include: "*"
 
 top-scores-limit:
-  number: 4
+  number: 10
+

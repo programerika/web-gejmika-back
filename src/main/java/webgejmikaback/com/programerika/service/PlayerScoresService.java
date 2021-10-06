@@ -1,13 +1,12 @@
 package webgejmikaback.com.programerika.service;
 
-import org.springframework.http.ResponseEntity;
+import com.mongodb.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import webgejmikaback.com.programerika.converter.PlayerScoresConverter;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.repository.PlayerScoresRepository;
 
-import java.net.URI;
 import java.util.*;
 
 @Service
@@ -25,24 +24,39 @@ public class PlayerScoresService {
         playerScoresRepository.deleteById(uid);
     }
 
-    public PlayerScore getPlayerByUsername(String username) {
+    public Optional<PlayerScore> getPlayerByUsername(String username) {
         return playerScoresRepository.findByUsername(username);
     }
 
     public PlayerScoreDTO savePlayerScore(PlayerScore playerScore) {
-        if (playerScore.getUsername() != null) {
+        Optional<PlayerScore> optional = getPlayerByUsername(playerScore.getUsername());
+        if (!optional.isPresent()) {
             playerScoresRepository.save(playerScore);
+            PlayerScore ps = getByUsername(playerScore.getUsername());
+            return playerScoresConverter.modelToDTO(ps);
+        } else {
+            return null;
         }
-        PlayerScore ps = getByUsername(playerScore.getUsername());
-        return new PlayerScoresConverter().modelToDTO(ps);
+    }
+
+    public void addPlayerScore(String username, Integer score) {
+        Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
+        System.out.println(optional.get().getUsername());
+        if (score <= 21) {
+            optional.ifPresent(p -> p.setScore(optional.get().getScore() + score));
+            optional.ifPresent(p -> playerScoresRepository.save(p));
+        }else {
+            System.out.println("");
+        }
     }
 
     public List<PlayerScore> getTopScore(){
         return playerScoresRepository.getTopScore();
     }
 
-    private PlayerScore getByUsername(String username) {
-        return playerScoresRepository.findByUsername(username);
+    public PlayerScore getByUsername(String username) {
+        return playerScoresRepository.findByUsername(username).get();
     }
+
 
 }
