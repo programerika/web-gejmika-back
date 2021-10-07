@@ -43,7 +43,7 @@ public class PlayerScoresController {
                     content = { @Content(schema = @Schema(implementation = Void.class))}),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Bad request",
+                    description = "Not Found",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{uid}", method = RequestMethod.DELETE)
@@ -63,8 +63,8 @@ public class PlayerScoresController {
                     description = "Success",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Bad request",
+                    responseCode = "404",
+                    description = "Not Found",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{username}", method = RequestMethod.GET)
