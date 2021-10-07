@@ -1,10 +1,10 @@
 package webgejmikaback.com.programerika.exceptions;
 
-public class PlayerNotFoundException extends Exception{
+public class UsernameNotFoundException extends Exception{
 
     private static final long serialVersionUID = 1L;
 
-    public PlayerNotFoundException(String message) {
+    public UsernameNotFoundException(String message) {
         super(message);
     }
 }
