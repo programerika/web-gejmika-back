@@ -3,8 +3,9 @@ package webgejmikaback.com.programerika.service;
 import org.springframework.stereotype.Service;
 import webgejmikaback.com.programerika.converter.PlayerScoresConverter;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
-import webgejmikaback.com.programerika.exceptions.PlayerAlreadyExistsException;
-import webgejmikaback.com.programerika.exceptions.PlayerNotFoundException;
+import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
+import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
+import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.repository.PlayerScoresRepository;
 
@@ -12,21 +13,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PlayerServiceImpl implements PlayerService {
+public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     private final PlayerScoresRepository playerScoresRepository;
     private final PlayerScoresConverter playerScoresConverter;
 
-    public PlayerServiceImpl(PlayerScoresRepository playerScoresRepository, PlayerScoresConverter playerScoresConverter) {
+    public PlayerScoreServiceImpl(PlayerScoresRepository playerScoresRepository, PlayerScoresConverter playerScoresConverter) {
         this.playerScoresRepository = playerScoresRepository;
         this.playerScoresConverter = playerScoresConverter;
     }
 
     @Override
-    public PlayerScoreDTO savePlayerScore(PlayerScore playerScore) throws PlayerAlreadyExistsException {
+    public PlayerScoreDTO savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(playerScore.getUsername());
         if (optional.isPresent()) {
-            throw new PlayerAlreadyExistsException("Username Already Exists in Repository");
+            throw new UsernameAlreadyExistsException("Username Already Exists in the Repository");
         } else {
             PlayerScore ps = playerScoresRepository.save(playerScore);
             return playerScoresConverter.modelToDTO(ps);
@@ -34,16 +35,16 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void addPlayerScore(String username, Integer score) throws PlayerNotFoundException,IllegalArgumentException {
+    public void addPlayerScore(String username, Integer score) throws UsernameNotFoundException,ScoreOutOfRangeException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
         if (!optional.isPresent()) {
-            throw new PlayerNotFoundException("Username Not Found in Repository");
+            throw new UsernameNotFoundException("Username Not Found in the Repository");
         }
         if (score <= 21 && score > 0) {
             optional.ifPresent(p -> p.setScore(optional.get().getScore() + score));
-            optional.ifPresent(p -> playerScoresRepository.save(p));
+            optional.ifPresent(playerScoresRepository::save);
         } else {
-            throw new IllegalArgumentException("Player score is out of range!");
+            throw new ScoreOutOfRangeException("Player score is out of range!");
         }
     }
 
@@ -53,19 +54,19 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerScore getByUsername(String username) throws PlayerNotFoundException {
-        Optional<PlayerScore> user = playerScoresRepository.findByUsername(username);
-        if (!user.isPresent()) {
-            throw new PlayerNotFoundException("User Not Found in Repository");
+    public PlayerScore getByUsername(String username) throws UsernameNotFoundException {
+        Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
+        if (!optional.isPresent()) {
+            throw new UsernameNotFoundException("Username Not Found in the Repository");
         }else {
-            return user.get();
+            return optional.get();
         }
     }
 
     @Override
-    public void delete(String uid) throws PlayerNotFoundException {
+    public void delete(String uid) throws UsernameNotFoundException {
         if (!playerScoresRepository.existsById(uid)) {
-            throw new PlayerNotFoundException("User Not Found in Repository");
+            throw new UsernameNotFoundException("Username Not Found in the Repository");
         }else {
             playerScoresRepository.deleteById(uid);
         }

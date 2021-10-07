@@ -10,9 +10,6 @@ import org.zalando.problem.Status;
 import org.zalando.problem.spring.common.MediaTypes;
 import org.zalando.problem.spring.web.advice.ProblemHandling;
 
-import java.net.URI;
-import java.util.Optional;
-
 @ControllerAdvice
 public class ApplicationExceptionHandler implements ProblemHandling {
 
@@ -21,40 +18,39 @@ public class ApplicationExceptionHandler implements ProblemHandling {
         return false;
     }
 
-
-
-    @ExceptionHandler(PlayerNotFoundException.class)
-    public ResponseEntity<Problem> handlePlayerNotFoundException(String message) {
-        return ResponseEntity.of(
-            Optional.of(
-                Problem.builder()
-                    .withType(URI.create("https://webgejmikaback.com/player-score/username-not-found"))
-                    .withTitle("Username not found")
-                    .withDetail("There is no username in the repository")
-                    .withStatus(Status.NOT_FOUND)
-                    .build()
-            ));
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Problem> handleUsernameNotFoundException(UsernameNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
+                .body(Problem.builder()
+                        .withTitle("Not Found")
+                        .withDetail(e.getMessage())
+                        .withStatus(Status.NOT_FOUND)
+                        .build());
     }
 
-    @ExceptionHandler(PlayerAlreadyExistsException.class)
-    public ResponseEntity<Problem> handlePlayerAlreadyExistsException(PlayerAlreadyExistsException e) {
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<Problem> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException e) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
                 .body(Problem.builder()
-                        .withTitle("Username already exists")
+                        .withTitle("Conflict")
                         .withDetail(e.getMessage())
                         .withStatus(Status.CONFLICT)
                         .build());
-//        return ResponseEntity.of(
-//            Optional.of(
-//                Problem.builder()
-//                    .withType(URI.create("https://webgejmikaback.com/player-score/username-already-exists"))
-//                    .withTitle("Username already exists")
-//                    .withDetail("The username is already in the repository")
-//                    .withStatus(Status.CONFLICT)
-//                    .build()
-//            ));
     }
 
+    @ExceptionHandler(ScoreOutOfRangeException.class)
+    public ResponseEntity<Problem> handleScoreOutOfRangeException(ScoreOutOfRangeException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
+                .body(Problem.builder()
+                        .withTitle("Not Acceptable")
+                        .withDetail(e.getMessage())
+                        .withStatus(Status.NOT_ACCEPTABLE)
+                        .build());
+    }
 }

@@ -6,18 +6,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
-import webgejmikaback.com.programerika.exceptions.ApplicationExceptionHandler;
-import webgejmikaback.com.programerika.exceptions.PlayerAlreadyExistsException;
-import webgejmikaback.com.programerika.exceptions.PlayerNotFoundException;
+import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
+import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
+import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
 import webgejmikaback.com.programerika.model.PlayerScore;
-import webgejmikaback.com.programerika.service.PlayerScoresService;
-import webgejmikaback.com.programerika.service.PlayerServiceImpl;
+import webgejmikaback.com.programerika.service.PlayerScoreServiceImpl;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -28,14 +25,10 @@ import java.util.*;
 @RequestMapping(value = "/api/v1/")
 public class PlayerScoresController {
 
-    private final PlayerScoresService playerScoresService;
-    private final PlayerServiceImpl playerService;
-    private final ApplicationExceptionHandler applicationExceptionHandler;
+    private final PlayerScoreServiceImpl playerScoreService;
 
-    public PlayerScoresController(PlayerScoresService playerScoresService, PlayerServiceImpl playerService, ApplicationExceptionHandler applicationExceptionHandler) {
-        this.playerScoresService = playerScoresService;
-        this.playerService = playerService;
-        this.applicationExceptionHandler = applicationExceptionHandler;
+    public PlayerScoresController(PlayerScoreServiceImpl playerScoreService) {
+        this.playerScoreService = playerScoreService;
     }
 
     @Operation(summary = "Delete score by uid", description = "It deletes player's score from all-scores collection.")
@@ -50,14 +43,9 @@ public class PlayerScoresController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{uid}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> delete(@PathVariable(name = "uid") String uid) {
-        try {
-            playerService.delete(uid);
+    public ResponseEntity<?> delete(@PathVariable(name = "uid") String uid) throws UsernameNotFoundException {
+            playerScoreService.delete(uid);
             return ResponseEntity.noContent().build();
-        } catch (PlayerNotFoundException e) {
-            return applicationExceptionHandler.handlePlayerNotFoundException(e.getMessage());
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
     }
 
     @Operation(summary = "Get player by username", description = "Provide username to get player with score from all-scores collection.")
@@ -72,14 +60,9 @@ public class PlayerScoresController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{username}", method = RequestMethod.GET)
-    public ResponseEntity<?> getPlayerByUserName(@PathVariable(name = "username") String username) {
-        try {
-            Optional<PlayerScore> optional = Optional.ofNullable(playerService.getByUsername(username));
+    public ResponseEntity<?> getPlayerByUserName(@PathVariable(name = "username") String username) throws UsernameNotFoundException {
+            Optional<PlayerScore> optional = Optional.ofNullable(playerScoreService.getByUsername(username));
             return ResponseEntity.of(optional);
-        } catch (PlayerNotFoundException e) {
-            return applicationExceptionHandler.handlePlayerNotFoundException(e.getMessage());
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
     }
 
     @Operation(summary = "Save player score", description = "Provide username and score to save the new player's score")
@@ -95,21 +78,15 @@ public class PlayerScoresController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
-    public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScore playerScore) throws PlayerAlreadyExistsException {
+    public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScore playerScore) throws UsernameAlreadyExistsException {
         PlayerScoreDTO dto = null;
-//        try {
-            dto = playerService.savePlayerScore(playerScore);
+            dto = playerScoreService.savePlayerScore(playerScore);
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(dto.getId())
                     .toUri();
             return ResponseEntity.created(location).body(dto);
-//        } catch (PlayerAlreadyExistsException e) {
-//            return applicationExceptionHandler.handlePlayerAlreadyExistsException(e);
-////            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-//        }
-
     }
 
     @Operation(summary = "Add player score", description = "Provide username and new score to add score to existing one")
@@ -128,15 +105,9 @@ public class PlayerScoresController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{username}/add-score", method = RequestMethod.POST)
-    public ResponseEntity<?> addScore(@PathVariable(name = "username") String username, @RequestBody Integer score) {
-            try {
-                playerService.addPlayerScore(username, score);
-                return ResponseEntity.noContent().build();
-            }catch (PlayerNotFoundException e) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
-            }catch (IllegalArgumentException ex) {
-                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,ex.getMessage());
-            }
+    public ResponseEntity<?> addScore(@PathVariable(name = "username") String username, @RequestBody Integer score) throws UsernameNotFoundException, ScoreOutOfRangeException {
+            playerScoreService.addPlayerScore(username, score);
+            return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Top score players", description = "Method gets 10 or more top score players")
@@ -152,7 +123,7 @@ public class PlayerScoresController {
     })
     @RequestMapping(value = "top-score", method = RequestMethod.GET)
     public ResponseEntity<List<PlayerScore>>  getTopScore() {
-        return ResponseEntity.ok(playerService.getTopScore());
+        return ResponseEntity.ok(playerScoreService.getTopScore());
     }
 
 }

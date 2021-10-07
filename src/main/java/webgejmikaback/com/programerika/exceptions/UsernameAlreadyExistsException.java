@@ -1,10 +1,10 @@
 package webgejmikaback.com.programerika.exceptions;
 
-public class PlayerAlreadyExistsException extends Exception{
+public class UsernameAlreadyExistsException extends Exception{
 
     private static final long serialVersionUID = 1L;
 
-    public PlayerAlreadyExistsException(String message) {
+    public UsernameAlreadyExistsException(String message) {
         super(message);
     }
 }
