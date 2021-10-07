@@ -66,6 +66,14 @@
 			<version>6.2.0.Final</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.zalando/problem-spring-web -->
+		<dependency>
+			<groupId>org.zalando</groupId>
+			<artifactId>problem-spring-web</artifactId>
+			<version>0.27.0</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
