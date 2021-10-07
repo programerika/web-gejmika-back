@@ -49,7 +49,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public List<PlayerScore> getTopScore() {
-        return null;
+        return playerScoresRepository.getTopScore();
     }
 
     @Override

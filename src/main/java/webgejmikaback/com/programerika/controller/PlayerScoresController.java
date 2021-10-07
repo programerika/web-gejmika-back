@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.zalando.problem.Problem;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.PlayerAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.PlayerNotFoundException;
@@ -20,6 +21,7 @@ import webgejmikaback.com.programerika.service.PlayerServiceImpl;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.net.http.HttpHeaders;
 import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -85,8 +87,8 @@ public class PlayerScoresController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))},
                     headers = {@Header(name = "Location")}),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Bad request",
+                    responseCode = "409",
+                    description = "Conflict",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
@@ -109,11 +111,15 @@ public class PlayerScoresController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "204",
-                    description = "No content",
+                    description = "No Content",
                     content = { @Content(schema = @Schema(implementation = Void.class))}),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Bad request",
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+            @ApiResponse(
+                    responseCode = "406",
+                    description = "Not Acceptable",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{username}/add-score", method = RequestMethod.POST)
