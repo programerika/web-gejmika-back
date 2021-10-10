@@ -30,7 +30,7 @@ class PlayerScoreServiceImplTest {
 
     @Test
     @DisplayName("Test getByUsername Success")
-    public void canGetByUsernameSuccess() {
+    public void canGetPlayerScoreByUsernameSuccess() {
         // given
         PlayerScore ps = new PlayerScore("","bole55",13);
         PlayerScore expected = null;
@@ -99,9 +99,15 @@ class PlayerScoreServiceImplTest {
     @Test
     @DisplayName("Test delete Success")
     @Disabled
-    void canDeletePlayerScoreByUID() {
+    void canDeletePlayerScoreByUID() throws UsernameNotFoundException {
         // given
+        PlayerScore ps = new PlayerScore("615e009a1e947e29fc97038a", "Coyote12", 13);
         // when
+        when(repository.existsById(anyString())).thenReturn(true);
+        underTest.delete(ps.getUid());
         // then
+        assertNotNull(ps.getUid());
+        assertEquals("615e009a1e947e29fc97038a",ps.getUid());
+        verify(repository).deleteById(ps.getUid());
     }
 }

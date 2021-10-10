@@ -61,7 +61,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     @Override
     public void delete(String uid) throws UsernameNotFoundException {
         if (!playerScoresRepository.existsById(uid)) {
-            throw new UsernameNotFoundException("Username Not Found in the Repository");
+            throw new UsernameNotFoundException("Username Not Found with uid: "+ uid +" in the Repository");
         }else {
             playerScoresRepository.deleteById(uid);
         }
