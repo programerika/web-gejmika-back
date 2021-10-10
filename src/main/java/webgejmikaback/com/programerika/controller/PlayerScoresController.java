@@ -80,7 +80,8 @@ public class PlayerScoresController {
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
     public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScore playerScore) throws UsernameAlreadyExistsException {
         PlayerScoreDTO dto = null;
-            dto = playerScoreService.savePlayerScore(playerScore);
+            PlayerScore ps = playerScoreService.savePlayerScore(playerScore);
+            dto.setId(ps.getUid());
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")

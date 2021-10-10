@@ -1,7 +1,6 @@
 package webgejmikaback.com.programerika.service;
 
 import org.springframework.stereotype.Service;
-import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
@@ -21,13 +20,13 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     }
 
     @Override
-    public PlayerScoreDTO savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException {
+    public PlayerScore savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(playerScore.getUsername());
         if (optional.isPresent()) {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository");
         } else {
-            PlayerScore ps = playerScoresRepository.save(playerScore);
-            return new PlayerScoreDTO(ps.getUid());
+            return playerScoresRepository.save(playerScore);
+//            return new PlayerScoreDTO(ps.getUid());
         }
     }
 
