@@ -35,10 +35,10 @@ class PlayerScoreServiceImplTest {
         PlayerScore ps = new PlayerScore("","bole55",13);
         PlayerScore expected = null;
         // when
-        when(repository.findByUsername("bole55"))
+        when(repository.findByUsername(anyString()))
                 .thenReturn(Optional.of(ps));
         try {
-            expected = underTest.getByUsername("bole55");
+            expected = underTest.getByUsername(ps.getUsername());
         } catch (UsernameNotFoundException e) {
             e.printStackTrace();
         }
@@ -70,7 +70,6 @@ class PlayerScoreServiceImplTest {
 
     @Test
     @DisplayName("Test getTopScore Success")
-//    @Disabled
     void canGetTopScore() {
         // given
         PlayerScore ps1 = new PlayerScore("", "bole55", 13);
@@ -89,16 +88,31 @@ class PlayerScoreServiceImplTest {
 
     @Test
     @DisplayName("Test addPlayerScore Success")
-    @Disabled
     void canAddScore() {
         // given
+        PlayerScore ps = new PlayerScore("", "Nadja12", 13);
+        Integer initScore = ps.getScore();
+        Integer addedScore = 0;
+        Integer score = 21;
         // when
+        when(repository.findByUsername(anyString()))
+                .thenReturn(Optional.of(ps));
+        try {
+            underTest.addPlayerScore(ps.getUsername(),score);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+        }
         // then
+        addedScore = initScore + score;
+        assertNotNull(ps.getUsername());
+        assertNotNull(score);
+        assertEquals("Nadja12",ps.getUsername());
+        assertEquals(addedScore,initScore+score);
+        verify(repository).save(ps);
     }
 
     @Test
     @DisplayName("Test delete Success")
-    @Disabled
     void canDeletePlayerScoreByUID() throws UsernameNotFoundException {
         // given
         PlayerScore ps = new PlayerScore("615e009a1e947e29fc97038a", "Coyote12", 13);
