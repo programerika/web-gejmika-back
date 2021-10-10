@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface PlayerScoresRepository extends MongoRepository<PlayerScore,String>, PlayerScoreRepositoryTopScore {
     Optional<PlayerScore> findByUsername(String username);
-    boolean existsByUsername(String username);
 }

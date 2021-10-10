@@ -1,7 +1,6 @@
 package webgejmikaback.com.programerika.service;
 
 import org.springframework.stereotype.Service;
-import webgejmikaback.com.programerika.converter.PlayerScoresConverter;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
@@ -16,11 +15,9 @@ import java.util.Optional;
 public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     private final PlayerScoresRepository playerScoresRepository;
-    private final PlayerScoresConverter playerScoresConverter;
 
-    public PlayerScoreServiceImpl(PlayerScoresRepository playerScoresRepository, PlayerScoresConverter playerScoresConverter) {
+    public PlayerScoreServiceImpl(PlayerScoresRepository playerScoresRepository) {
         this.playerScoresRepository = playerScoresRepository;
-        this.playerScoresConverter = playerScoresConverter;
     }
 
     @Override
@@ -30,7 +27,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository");
         } else {
             PlayerScore ps = playerScoresRepository.save(playerScore);
-            return playerScoresConverter.modelToDTO(ps);
+            return new PlayerScoreDTO(ps.getUid());
         }
     }
 

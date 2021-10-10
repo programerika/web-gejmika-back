@@ -1,6 +1,5 @@
 package webgejmikaback.com.programerika.repository;
 
-import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.model.PlayerScore;
 
 import java.util.List;
