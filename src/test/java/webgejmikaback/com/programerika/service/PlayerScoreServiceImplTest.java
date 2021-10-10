@@ -1,22 +1,17 @@
 package webgejmikaback.com.programerika.service;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.repository.PlayerScoresRepository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -35,7 +30,7 @@ class PlayerScoreServiceImplTest {
 
     @Test
     @DisplayName("Test getByUsername Success")
-    public void testGetByUsernameSuccess() {
+    public void canGetByUsernameSuccess() {
         // given
         PlayerScore ps = new PlayerScore("","bole55",13);
         PlayerScore expected = null;
@@ -71,7 +66,42 @@ class PlayerScoreServiceImplTest {
         assertNotNull(saved);
         assertEquals("bole55",saved.getUsername());
         verify(repository).save(saved);
-
     }
-    
+
+    @Test
+    @DisplayName("Test getTopScore Success")
+//    @Disabled
+    void canGetTopScore() {
+        // given
+        PlayerScore ps1 = new PlayerScore("", "bole55", 13);
+        PlayerScore ps2 = new PlayerScore("", "udzej11", 8);
+        PlayerScore ps3 = new PlayerScore("", "naki12", 21);
+        List<PlayerScore> list = Arrays.asList(ps1,ps2,ps3);
+        repository.saveAll(list);
+        // when
+        when(repository.getTopScore()).thenReturn(list);
+        List<PlayerScore> expected = underTest.getTopScore();
+        // then
+        assertNotNull(list);
+        assertEquals(list,expected);
+        verify(repository).getTopScore();
+    }
+
+    @Test
+    @DisplayName("Test addPlayerScore Success")
+    @Disabled
+    void canAddScore() {
+        // given
+        // when
+        // then
+    }
+
+    @Test
+    @DisplayName("Test delete Success")
+    @Disabled
+    void canDeletePlayerScoreByUID() {
+        // given
+        // when
+        // then
+    }
 }

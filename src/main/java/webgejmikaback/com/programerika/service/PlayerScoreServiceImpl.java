@@ -26,7 +26,6 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository");
         } else {
             return playerScoresRepository.save(playerScore);
-//            return new PlayerScoreDTO(ps.getUid());
         }
     }
 
