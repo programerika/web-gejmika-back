@@ -1,8 +1,9 @@
 package webgejmikaback.com.programerika.service;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.model.PlayerScore;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class PlayerScoreServiceImplTest {
 
     @Mock
