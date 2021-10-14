@@ -6,11 +6,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
+import webgejmikaback.com.programerika.exceptions.UsernameBadValidationException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
 import webgejmikaback.com.programerika.model.PlayerScore;
@@ -73,16 +77,27 @@ public class PlayerScoresController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))},
                     headers = {@Header(name = "Location")}),
             @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))}),
+            @ApiResponse(
+                    responseCode = "406",
+                    description = "Not Acceptable",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+            @ApiResponse(
                     responseCode = "409",
                     description = "Conflict",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
-    public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScore playerScore) throws UsernameAlreadyExistsException {
-        PlayerScoreDTO dto = null;
+    public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScore playerScore,BindingResult result) throws UsernameAlreadyExistsException, UsernameBadValidationException, ScoreOutOfRangeException {
+        if (result.hasErrors()){
+            throw new UsernameBadValidationException("Username bad validation. Username must start with min 4 and max 6 letters, followed by 2 digits.");
+        }
+        PlayerScoreDTO dto = new PlayerScoreDTO();
             PlayerScore ps = playerScoreService.savePlayerScore(playerScore);
-            dto.setId(ps.getUid());
-            URI location = ServletUriComponentsBuilder
+        dto.setId(ps.getUid());
+        URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(dto.getId())

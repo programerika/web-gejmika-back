@@ -20,26 +20,32 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     }
 
     @Override
-    public PlayerScore savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException {
+    public PlayerScore savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException, ScoreOutOfRangeException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(playerScore.getUsername());
         if (optional.isPresent()) {
-            throw new UsernameAlreadyExistsException("Username Already Exists in the Repository");
+            throw new UsernameAlreadyExistsException("Username Already Exists in the Repository or input is not correct");
         } else {
-            return playerScoresRepository.save(playerScore);
+            if (playerScore.getUsername() == null) {
+                throw new UsernameAlreadyExistsException("Input is not valid");
+            }
+            if (playerScore.getScore() <=0 || playerScore.getScore() > 21) {
+                throw new ScoreOutOfRangeException("Score is out of range");
+            }
+            else return playerScoresRepository.save(playerScore);
         }
     }
 
     @Override
     public void addPlayerScore(String username, Integer score) throws UsernameNotFoundException,ScoreOutOfRangeException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
-        if (!optional.isPresent()) {
+        if (optional.isEmpty()) {
             throw new UsernameNotFoundException("Username Not Found in the Repository");
         }
         if (score <= 21 && score > 0) {
             optional.ifPresent(p -> p.setScore(optional.get().getScore() + score));
             optional.ifPresent(playerScoresRepository::save);
         } else {
-            throw new ScoreOutOfRangeException("Player score is out of range!");
+            throw new ScoreOutOfRangeException("Player score is out of range");
         }
     }
 
@@ -51,7 +57,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     @Override
     public PlayerScore getByUsername(String username) throws UsernameNotFoundException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
-        if (!optional.isPresent()) {
+        if (optional.isEmpty()) {
             throw new UsernameNotFoundException("Username Not Found in the Repository");
         }else {
             return optional.get();

@@ -2,8 +2,10 @@ package webgejmikaback.com.programerika.service;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.model.PlayerScore;
@@ -22,12 +24,14 @@ class PlayerScoreServiceImplTest {
 
     @Mock
     private PlayerScoresRepository repository;
+
+    @InjectMocks
     private PlayerScoreServiceImpl underTest;
 
-    @BeforeEach
-    void setUp() {
-        underTest = new PlayerScoreServiceImpl(repository);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        underTest = new PlayerScoreServiceImpl(repository);
+//    }
 
     @Test
     @DisplayName("Test getByUsername Success")

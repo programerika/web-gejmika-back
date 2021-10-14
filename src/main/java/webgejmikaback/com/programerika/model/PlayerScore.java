@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -20,6 +22,8 @@ public class PlayerScore {
     @JsonIgnore
     private String uid;
     @Pattern(regexp = "(?i)[a-z]{4,6}[0-9]{2}", message = "Username must start with min 4 and max 6 letters, followed by 2 digits")
+    @NotNull
     private String username;
+    @NotNull
     private Integer score;
 }

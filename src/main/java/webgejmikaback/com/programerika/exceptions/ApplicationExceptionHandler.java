@@ -10,6 +10,7 @@ import org.zalando.problem.Status;
 import org.zalando.problem.spring.common.MediaTypes;
 import org.zalando.problem.spring.web.advice.ProblemHandling;
 
+
 @ControllerAdvice
 public class ApplicationExceptionHandler implements ProblemHandling {
 
@@ -23,7 +24,8 @@ public class ApplicationExceptionHandler implements ProblemHandling {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
-                .body(Problem.builder()
+                .body(Problem
+                        .builder()
                         .withTitle("Not Found")
                         .withDetail(e.getMessage())
                         .withStatus(Status.NOT_FOUND)
@@ -35,7 +37,8 @@ public class ApplicationExceptionHandler implements ProblemHandling {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
-                .body(Problem.builder()
+                .body(Problem
+                        .builder()
                         .withTitle("Conflict")
                         .withDetail(e.getMessage())
                         .withStatus(Status.CONFLICT)
@@ -47,10 +50,25 @@ public class ApplicationExceptionHandler implements ProblemHandling {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
-                .body(Problem.builder()
+                .body(Problem
+                        .builder()
                         .withTitle("Not Acceptable")
                         .withDetail(e.getMessage())
                         .withStatus(Status.NOT_ACCEPTABLE)
                         .build());
     }
+
+    @ExceptionHandler(UsernameBadValidationException.class)
+    public ResponseEntity<Problem> handleUsernameBadValidationException(UsernameBadValidationException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
+                .body(Problem
+                        .builder()
+                        .withTitle("Bad Request")
+                        .withDetail(e.getMessage())
+                        .withStatus(Status.BAD_REQUEST)
+                        .build());
+    }
+
 }
