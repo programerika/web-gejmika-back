@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface PlayerScoreService {
 
-    PlayerScore savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException, ScoreOutOfRangeException;
-    void addPlayerScore(String username, Integer score) throws UsernameNotFoundException, ScoreOutOfRangeException;
+    PlayerScore savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException;
+    void addPlayerScore(String username, Integer score) throws UsernameNotFoundException;
     List<PlayerScore> getTopScore();
     PlayerScore getByUsername(String username) throws UsernameNotFoundException;
     void delete(String uid) throws UsernameNotFoundException;

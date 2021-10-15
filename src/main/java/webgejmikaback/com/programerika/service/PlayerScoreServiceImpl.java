@@ -26,7 +26,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository or input is not correct");
         } else {
             if (playerScore.getUsername() == null) {
-                throw new UsernameAlreadyExistsException("Input is not valid");
+                throw new IllegalArgumentException("Input is not valid");
             }
             if (playerScore.getScore() <=0 || playerScore.getScore() > 21) {
                 throw new ScoreOutOfRangeException("Score is out of range");
