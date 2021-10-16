@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -92,7 +93,9 @@ public class PlayerScoresController {
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
     public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScore playerScore,BindingResult result) throws UsernameAlreadyExistsException, UsernameBadValidationException, ScoreOutOfRangeException {
         if (result.hasErrors()){
-            throw new UsernameBadValidationException("Username bad validation. Username must start with min 4 and max 6 letters, followed by 2 digits.");
+            FieldError fieldError = result.getFieldError();
+            assert fieldError != null;
+            throw new UsernameBadValidationException(fieldError.getDefaultMessage());
         }
         PlayerScoreDTO dto = new PlayerScoreDTO();
             PlayerScore ps = playerScoreService.savePlayerScore(playerScore);
