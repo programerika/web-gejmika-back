@@ -2,6 +2,7 @@ package webgejmikaback.com.programerika.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import webgejmikaback.com.programerika.exceptions.UidNotFoundException;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
@@ -73,9 +74,9 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     }
 
     @Override
-    public void delete(String uid) throws UsernameNotFoundException {
+    public void delete(String uid) throws UidNotFoundException {
         if (!playerScoresRepository.existsById(uid)) {
-            throw new UsernameNotFoundException("Username Not Found with uid: "+ uid +" in the Repository");
+            throw new UidNotFoundException("Uid Not Found in the Repository");
         }else {
             playerScoresRepository.deleteById(uid);
         }

@@ -12,10 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
-import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
-import webgejmikaback.com.programerika.exceptions.UsernameBadValidationException;
-import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
-import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
+import webgejmikaback.com.programerika.exceptions.*;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.service.PlayerScoreServiceImpl;
 
@@ -46,7 +43,7 @@ public class PlayerScoresController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
     })
     @RequestMapping(value = "player-scores/{uid}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> delete(@PathVariable(name = "uid") String uid) throws UsernameNotFoundException {
+    public ResponseEntity<?> delete(@PathVariable(name = "uid") String uid) throws UidNotFoundException {
             playerScoreService.delete(uid);
             return ResponseEntity.noContent().build();
     }

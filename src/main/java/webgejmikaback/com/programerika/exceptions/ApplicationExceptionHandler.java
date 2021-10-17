@@ -71,4 +71,17 @@ public class ApplicationExceptionHandler implements ProblemHandling {
                         .build());
     }
 
+    @ExceptionHandler(UidNotFoundException.class)
+    public  ResponseEntity<Problem> handlerUidNotFoundException(UidNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
+                .body(Problem
+                        .builder()
+                        .withTitle("Not Found")
+                        .withDetail(e.getMessage())
+                        .withStatus(Status.NOT_FOUND)
+                        .build());
+    }
+
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import webgejmikaback.com.programerika.exceptions.UidNotFoundException;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.model.PlayerScore;
@@ -143,7 +144,7 @@ class PlayerScoreServiceImplTest {
 
     @Test
     @DisplayName("Test delete should delete PlayerScore by UID")
-    void deleteShouldDeletePlayerScoreByUID() throws UsernameNotFoundException {
+    void deleteShouldDeletePlayerScoreByUID() throws UidNotFoundException {
         // given
         PlayerScore ps = new PlayerScore("615e009a1e947e29fc97038a", "Coyote12", 13);
         // when
@@ -157,11 +158,11 @@ class PlayerScoreServiceImplTest {
 
     @Test
     @DisplayName("Test delete throws an exception for UID not valid")
-    void canDeletePlayerScoreByUID() throws UsernameNotFoundException {
+    void canDeletePlayerScoreByUID() throws UidNotFoundException {
         // given
         PlayerScore ps = new PlayerScore("615e009a1e947e29fc97038a", "Coyote12", 13);
         // then
-        assertThrows(UsernameNotFoundException.class, () -> {
+        assertThrows(UidNotFoundException.class, () -> {
             service.delete("615e009a1e947e29fc970111");
         });
     }
