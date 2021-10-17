@@ -1,6 +1,5 @@
 package webgejmikaback.com.programerika.service;
 
-import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
 import webgejmikaback.com.programerika.model.PlayerScore;
