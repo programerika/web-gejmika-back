@@ -33,9 +33,6 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         if (optional.isPresent()) {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository or input is not correct");
         } else {
-            if (playerScore.getUsername() == null) {
-                throw new IllegalArgumentException("Input is not valid");
-            }
             if (!isScoreInRange(playerScore.getScore())) {
                 throw new ScoreOutOfRangeException("Score is out of range");
             }
@@ -83,6 +80,6 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     }
 
     private boolean isScoreInRange(int score) {
-        return (score <= maxScore && score >= minScore);
+        return (score <= maxScore || score >= minScore);
     }
 }

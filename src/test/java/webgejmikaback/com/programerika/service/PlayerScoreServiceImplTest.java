@@ -1,10 +1,8 @@
 package webgejmikaback.com.programerika.service;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
+import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
 import webgejmikaback.com.programerika.exceptions.UidNotFoundException;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
@@ -16,96 +14,87 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class PlayerScoreServiceImplTest {
 
-    @Mock
     private PlayerScoresRepository repository;
 
-    @InjectMocks
-    private PlayerScoreServiceImpl service;
+    private PlayerScoreServiceImpl serviceUnderTest;
+
+    @BeforeEach
+    public void setUp() {
+        repository = Mockito.mock(PlayerScoresRepository.class);
+        serviceUnderTest = new PlayerScoreServiceImpl(repository);
+    }
 
     @Test
     @DisplayName("Test getByUsername should return valid output")
-    public void getByUsernameShouldReturnValidOutput() throws UsernameNotFoundException {
+    public void testGetByUsernameShouldReturnValidOutput() {
         // given
         PlayerScore ps = new PlayerScore("","bole55",13);
         // when
-        when(repository.findByUsername(anyString()))
+        Mockito.when(repository.findByUsername(Mockito.anyString()))
                 .thenReturn(Optional.of(ps));
-
-        PlayerScore expected = service.getByUsername(ps.getUsername());
+        PlayerScore expected = serviceUnderTest.getByUsername(ps.getUsername());
         // then
         assertNotNull(expected);
         assertEquals("bole55",expected.getUsername());
-        verify(repository).findByUsername("bole55");
+        Mockito.verify(repository,Mockito.times(1)).findByUsername("bole55");
     }
 
     @Test
-    @DisplayName("Test getByUsername throws an exception for username is blank")
-    public void getByUsernameShouldThrowAnException_For_UsernameIsBlank() throws UsernameNotFoundException {
-        // given
-        PlayerScore ps = new PlayerScore("","bole55",13);
+    @DisplayName("Test getByUsername throws an exception for username is blank or not exists")
+    public void testGetByUsernameShouldThrowAnException_For_UsernameIsBlank() {
+        // when
+        Mockito.when(repository.findByUsername(Mockito.anyString()))
+                .thenThrow(new UsernameNotFoundException("Username cannot be empty or not exists"));
         // then
-        assertThrows(UsernameNotFoundException.class, () -> {
-            service.getByUsername("");
-        });
-    }
-
-    @Test
-    @DisplayName("Test getByUsername throws an exception for username not exists")
-    public void getByUsernameShouldThrowAnException_For_UsernameNotExists() throws UsernameNotFoundException {
-        // given
-        PlayerScore ps = new PlayerScore("","bole55",13);
-        // then
-        assertThrows(UsernameNotFoundException.class, () -> {
-            service.getByUsername("test44");
-        });
+        assertThrows(UsernameNotFoundException.class, () ->
+                serviceUnderTest.getByUsername(""));
     }
 
     @Test
     @DisplayName("Test savePlayerScore should create new PlayerScore")
-    void savePlayerScoreShouldCreateNewPlayerScore() throws UsernameAlreadyExistsException {
+    void testSavePlayerScoreShouldCreateNewPlayerScore() {
         // given
         PlayerScore ps = new PlayerScore("", "bole55", 13);
         // when
-        assertThrows(UsernameNotFoundException.class, () -> {
-            service.getByUsername("test44");
-        });
+        Mockito.when(repository.findByUsername("bole55")).thenReturn(Optional.empty());
+        serviceUnderTest.savePlayerScore(ps);
+        // then
+        Mockito.verify((repository), Mockito.times(1)).save(ps);
     }
 
     @Test
     @DisplayName("Test savePlayerScore throws an exception for PlayerScore username already exists")
-    void savePlayerScoreShouldThrowAnException_For_PlayerScoreUsernameAlreadyExists() throws UsernameAlreadyExistsException {
+    void testSavePlayerScoreShouldThrowAnException_For_PlayerScoreUsernameAlreadyExists() {
         // given
         PlayerScore ps = new PlayerScore("", "bole55", 13);
-
-        given(repository.findByUsername(ps.getUsername())).willReturn(Optional.of(ps));
+        //when
+        Mockito.when(repository.findByUsername(ps.getUsername())).thenReturn(Optional.of(ps));
+        Mockito.when(repository.save(ps)).thenThrow(UsernameAlreadyExistsException.class);
         // then
-        assertThrows(UsernameAlreadyExistsException.class, () -> {
-            service.savePlayerScore(ps);
-        });
+        assertThrows(UsernameAlreadyExistsException.class, () ->
+                serviceUnderTest.savePlayerScore(ps));
     }
 
     @Test
-    @DisplayName("Test savePlayerScore throws an exception for PlayerScore username is null")
-    void savePlayerScoreShouldThrowAnException_For_PlayerScoreUsernameIsNull() throws UsernameAlreadyExistsException {
+    @DisplayName("Test savePlayerScore throws an exception for score out of range")
+    void testSavePlayerScoreShouldThrowAnException_For_ScoreOutOfRange() {
         // given
-        PlayerScore ps = new PlayerScore("", null, 13);
-
-        given(repository.findByUsername(ps.getUsername())).willThrow(IllegalArgumentException.class);
+        PlayerScore ps = new PlayerScore("", "bole55", 23);
+        // when
+        Mockito.when(repository.findByUsername(ps.getUsername())).thenReturn(Optional.empty());
+        Mockito.when(repository.save(ps)).thenThrow(ScoreOutOfRangeException.class);
         // then
-        assertThrows(IllegalArgumentException.class, () -> {
-            repository.findByUsername(ps.getUsername());
-        });
+        assertThrows(ScoreOutOfRangeException.class, () ->
+            serviceUnderTest.savePlayerScore(ps)
+        );
     }
 
     @Test
     @DisplayName("Test getTopScore should return top score list")
-    void getTopScoreShouldReturnTopScoreList() {
+    void testGetTopScoreShouldReturnTopScoreList() {
         // given
         PlayerScore ps1 = new PlayerScore("", "bole55", 13);
         PlayerScore ps2 = new PlayerScore("", "udzej11", 8);
@@ -113,57 +102,64 @@ class PlayerScoreServiceImplTest {
         List<PlayerScore> list = Arrays.asList(ps1,ps2,ps3);
         repository.saveAll(list);
         // when
-        when(repository.getTopScore()).thenReturn(list);
-        List<PlayerScore> expected = service.getTopScore();
+        Mockito.when(repository.getTopScore()).thenReturn(list);
+        List<PlayerScore> expected = serviceUnderTest.getTopScore();
         // then
         assertNotNull(list);
-        assertEquals(list,expected);
-        verify(repository).getTopScore();
+        assertEquals(list.get(0).getScore(), expected.get(0).getScore());
+        Mockito.verify((repository),Mockito.times(1)).getTopScore();
     }
 
     @Test
-    @DisplayName("Test addPlayerScore should add score")
-    void addPlayerScoreShouldAddScore() throws UsernameNotFoundException {
+    @DisplayName("Test addPlayerScore should throw an exception for username not found")
+    void testAddPlayerScoreShouldThrowAnException_For_UsernameNotFound() {
+        // when
+        Mockito.when(repository.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
+        // then
+        assertThrows(UsernameNotFoundException.class, () ->
+            serviceUnderTest.addPlayerScore("zika33",13)
+        );
+    }
+
+    @Test
+    @DisplayName("Test addPlayerScore success")
+    void testAddPlayerScoreShouldSuccess() {
         // given
         PlayerScore ps = new PlayerScore("", "Nadja12", 13);
-        Integer initScore = ps.getScore();
-        Integer score = 21;
         // when
-        when(repository.findByUsername(anyString()))
-                .thenReturn(Optional.of(ps));
-
-        service.addPlayerScore(ps.getUsername(),score);
+        Mockito.when(repository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(ps));
+        serviceUnderTest.addPlayerScore(ps.getUsername(), 21);
         // then
-        Integer addedScore = initScore + score;
-        assertNotNull(ps.getUsername());
-        assertNotNull(score);
-        assertEquals("Nadja12",ps.getUsername());
-        assertEquals(addedScore,initScore+score);
-        verify(repository).save(ps);
+        Mockito.verify((repository), Mockito.times(1)).save(ps);
+
     }
 
     @Test
     @DisplayName("Test delete should delete PlayerScore by UID")
-    void deleteShouldDeletePlayerScoreByUID() throws UidNotFoundException {
+    void testDeleteShouldDeletePlayerScoreByUID() {
         // given
         PlayerScore ps = new PlayerScore("615e009a1e947e29fc97038a", "Coyote12", 13);
         // when
-        when(repository.existsById(anyString())).thenReturn(true);
-        service.delete(ps.getUid());
+        Mockito.when(repository.existsById(Mockito.anyString())).thenReturn(true);
+        try {
+            serviceUnderTest.delete(ps.getUid());
+        } catch (UidNotFoundException e) {
+            e.printStackTrace();
+        }
         // then
         assertNotNull(ps.getUid());
         assertEquals("615e009a1e947e29fc97038a",ps.getUid());
-        verify(repository).deleteById(ps.getUid());
+        Mockito.verify((repository), Mockito.times(1)).deleteById(ps.getUid());
     }
 
     @Test
     @DisplayName("Test delete throws an exception for UID not valid")
-    void canDeletePlayerScoreByUID() throws UidNotFoundException {
-        // given
-        PlayerScore ps = new PlayerScore("615e009a1e947e29fc97038a", "Coyote12", 13);
+    void testCanDeleteShouldThrowAnException_For_uidNotValid() {
+        // when
+        Mockito.when(repository.existsById(Mockito.anyString())).thenReturn(false);
         // then
-        assertThrows(UidNotFoundException.class, () -> {
-            service.delete("615e009a1e947e29fc970111");
-        });
+        assertThrows(UidNotFoundException.class, () ->
+            serviceUnderTest.delete("615e009a1e947e29fc970111")
+        );
     }
 }
