@@ -1,5 +1,6 @@
 package webgejmikaback.com.programerika.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
@@ -12,6 +13,12 @@ import java.util.Optional;
 
 @Service
 public class PlayerScoreServiceImpl implements PlayerScoreService {
+
+    @Value("${config-params.min-score}")
+    private int minScore;
+
+    @Value("${config-params.max-score}")
+    private int maxScore;
 
     private final PlayerScoresRepository playerScoresRepository;
 
@@ -28,7 +35,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             if (playerScore.getUsername() == null) {
                 throw new IllegalArgumentException("Input is not valid");
             }
-            if (playerScore.getScore() <=0 || playerScore.getScore() > 21) {
+            if (playerScore.getScore() <=minScore || playerScore.getScore() > maxScore) {
                 throw new ScoreOutOfRangeException("Score is out of range");
             }
             else return playerScoresRepository.save(playerScore);
@@ -41,7 +48,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         if (optional.isEmpty()) {
             throw new UsernameNotFoundException("Username Not Found in the Repository");
         }
-        if (score <= 21 && score > 0) {
+        if (score <= maxScore && score >= minScore) {
             optional.ifPresent(p -> p.setScore(optional.get().getScore() + score));
             optional.ifPresent(playerScoresRepository::save);
         } else {

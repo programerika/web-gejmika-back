@@ -17,8 +17,10 @@ management:
       exposure:
         include: "*"
 
-top-scores-limit:
-  number: 10
+config-params:
+  min-score: 8
+  max-score: 21
+  top-score-players-limit: 10
 
 server:
   error:

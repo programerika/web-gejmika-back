@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class PlayerScoreRepositoryTopScoreImpl implements PlayerScoreRepositoryTopScore {
 
-    @Value("${top-scores-limit.number}")
+    @Value("${config-params.top-score-players-limit}")
     public int limit;
 
     private final MongoTemplate mongoTemplate;
