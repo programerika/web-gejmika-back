@@ -35,7 +35,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             if (playerScore.getUsername() == null) {
                 throw new IllegalArgumentException("Input is not valid");
             }
-            if (playerScore.getScore() <=minScore || playerScore.getScore() > maxScore) {
+            if (!isScoreInRange(playerScore.getScore())) {
                 throw new ScoreOutOfRangeException("Score is out of range");
             }
             else return playerScoresRepository.save(playerScore);
@@ -48,9 +48,10 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         if (optional.isEmpty()) {
             throw new UsernameNotFoundException("Username Not Found in the Repository");
         }
-        if (score <= maxScore && score >= minScore) {
-            optional.ifPresent(p -> p.setScore(optional.get().getScore() + score));
-            optional.ifPresent(playerScoresRepository::save);
+        PlayerScore p = optional.get();
+        if (isScoreInRange(score)) {
+            p.setScore(p.getScore() + score);
+            playerScoresRepository.save(p);
         } else {
             throw new ScoreOutOfRangeException("Player score is out of range");
         }
@@ -78,5 +79,9 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         }else {
             playerScoresRepository.deleteById(uid);
         }
+    }
+
+    private boolean isScoreInRange(int score) {
+        return (score <= maxScore && score >= minScore);
     }
 }
