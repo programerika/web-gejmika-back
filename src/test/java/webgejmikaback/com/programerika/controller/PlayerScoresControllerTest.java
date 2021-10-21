@@ -1,9 +1,9 @@
 package webgejmikaback.com.programerika.controller;
 
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -13,16 +13,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.validation.BindingResult;
+import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
+import webgejmikaback.com.programerika.exceptions.UsernameBadValidationException;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.service.PlayerScoreServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@ExtendWith(SpringExtension.class)
 @WebMvcTest(PlayerScoresController.class)
-//@SpringBootTest
 class PlayerScoresControllerTest {
 
     @MockBean
@@ -35,7 +38,8 @@ class PlayerScoresControllerTest {
     MockMvc mockMvc;
 
     @Test
-    void savePlayerScore() {
+    @DisplayName("Test savePlayerScore Success")
+    void testSavePlayerScoreSuccess() {
         PlayerScore ps = new PlayerScore("UID123", "bole55", 13);
         Mockito.when(playerScoreService.savePlayerScore(Mockito.any()))
                 .thenReturn(ps);
@@ -53,5 +57,24 @@ class PlayerScoresControllerTest {
         ArgumentCaptor<PlayerScore> argument = ArgumentCaptor.forClass(PlayerScore.class);
         Mockito.verify(playerScoreService).savePlayerScore(argument.capture());
         assertEquals(argument.getValue().getUsername(),ps.getUsername());
+    }
+
+    @Test
+    @DisplayName("Test savePlayerScore throws an exception for field bad validation")
+    void testSavePlayerScoreThrowsAnException_For_FieldBadValidation() throws Exception {
+        PlayerScore ps = new PlayerScore("testUID", "bole555a", 13);
+        Mockito.when(playerScoreService.savePlayerScore(Mockito.any()))
+                .thenReturn(ps);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/player-scores")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(ps))
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.type", Matchers.is("UsernameBadValidationException")));
+
+
+
     }
 }

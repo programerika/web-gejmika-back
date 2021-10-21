@@ -1,8 +1,9 @@
 package webgejmikaback.com.programerika.service;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -71,7 +72,7 @@ class PlayerScoreServiceTest {
 
         PlayerScore saved = serviceUnderTest.savePlayerScore(ps);
         // then
-        Assertions.assertEquals(saved.getUsername(),ps.getUsername());
+        assertEquals(saved.getUsername(),ps.getUsername());
         Mockito.verify((repository), Mockito.times(1)).save(ps);
     }
 

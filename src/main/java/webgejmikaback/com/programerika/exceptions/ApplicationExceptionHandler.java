@@ -10,6 +10,8 @@ import org.zalando.problem.Status;
 import org.zalando.problem.spring.common.MediaTypes;
 import org.zalando.problem.spring.web.advice.ProblemHandling;
 
+import java.net.URI;
+
 
 @ControllerAdvice
 public class ApplicationExceptionHandler implements ProblemHandling {
@@ -66,6 +68,7 @@ public class ApplicationExceptionHandler implements ProblemHandling {
                 .body(Problem
                         .builder()
                         .withTitle("Bad Request")
+                        .withType(URI.create(e.getClass().getSimpleName()))
                         .withDetail(e.getMessage())
                         .withStatus(Status.BAD_REQUEST)
                         .build());
