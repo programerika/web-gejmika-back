@@ -1,7 +1,11 @@
 package webgejmikaback.com.programerika.service;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
 import webgejmikaback.com.programerika.exceptions.UidNotFoundException;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
@@ -15,10 +19,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PlayerScoreServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class PlayerScoreServiceTest {
 
+    @Mock
     private PlayerScoresRepository repository;
 
+    @Mock
     private PlayerScoreServiceImpl serviceUnderTest;
 
     @BeforeEach
@@ -60,8 +67,11 @@ class PlayerScoreServiceImplTest {
         PlayerScore ps = new PlayerScore("", "bole55", 13);
         // when
         Mockito.when(repository.findByUsername("bole55")).thenReturn(Optional.empty());
-        serviceUnderTest.savePlayerScore(ps);
+        Mockito.when(repository.save(ps)).thenReturn(ps);
+
+        PlayerScore saved = serviceUnderTest.savePlayerScore(ps);
         // then
+        Assertions.assertEquals(saved.getUsername(),ps.getUsername());
         Mockito.verify((repository), Mockito.times(1)).save(ps);
     }
 
@@ -72,7 +82,6 @@ class PlayerScoreServiceImplTest {
         PlayerScore ps = new PlayerScore("", "bole55", 13);
         //when
         Mockito.when(repository.findByUsername(ps.getUsername())).thenReturn(Optional.of(ps));
-        Mockito.when(repository.save(ps)).thenThrow(UsernameAlreadyExistsException.class);
         // then
         assertThrows(UsernameAlreadyExistsException.class, () ->
                 serviceUnderTest.savePlayerScore(ps));
