@@ -29,6 +29,7 @@ public class ApplicationExceptionHandler implements ProblemHandling {
                 .body(Problem
                         .builder()
                         .withTitle("Not Found")
+                        .withType(URI.create(e.getClass().getSimpleName()))
                         .withDetail(e.getMessage())
                         .withStatus(Status.NOT_FOUND)
                         .build());
@@ -42,6 +43,7 @@ public class ApplicationExceptionHandler implements ProblemHandling {
                 .body(Problem
                         .builder()
                         .withTitle("Conflict")
+                        .withType(URI.create(e.getClass().getSimpleName()))
                         .withDetail(e.getMessage())
                         .withStatus(Status.CONFLICT)
                         .build());
@@ -55,6 +57,7 @@ public class ApplicationExceptionHandler implements ProblemHandling {
                 .body(Problem
                         .builder()
                         .withTitle("Not Acceptable")
+                        .withType(URI.create(e.getClass().getSimpleName()))
                         .withDetail(e.getMessage())
                         .withStatus(Status.NOT_ACCEPTABLE)
                         .build());
@@ -82,6 +85,7 @@ public class ApplicationExceptionHandler implements ProblemHandling {
                 .body(Problem
                         .builder()
                         .withTitle("Not Found")
+                        .withType(URI.create(e.getClass().getSimpleName()))
                         .withDetail(e.getMessage())
                         .withStatus(Status.NOT_FOUND)
                         .build());
