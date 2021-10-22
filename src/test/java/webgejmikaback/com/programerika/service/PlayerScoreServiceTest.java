@@ -27,7 +27,7 @@ class PlayerScoreServiceTest {
     private PlayerScoresRepository repository;
 
     @Mock
-    private PlayerScoreServiceImpl serviceUnderTest;
+    private PlayerScoreService serviceUnderTest;
 
     @BeforeEach
     public void setUp() {

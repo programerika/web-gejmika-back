@@ -1,6 +1,5 @@
 package webgejmikaback.com.programerika.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -14,14 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.validation.BindingResult;
-import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
-import webgejmikaback.com.programerika.exceptions.UsernameBadValidationException;
 import webgejmikaback.com.programerika.model.PlayerScore;
-import webgejmikaback.com.programerika.service.PlayerScoreServiceImpl;
+import webgejmikaback.com.programerika.service.PlayerScoreService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PlayerScoresControllerTest {
 
     @MockBean
-    private PlayerScoreServiceImpl playerScoreService;
+    private PlayerScoreService playerScoreService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -73,8 +68,5 @@ class PlayerScoresControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.type", Matchers.is("UsernameBadValidationException")));
-
-
-
     }
 }

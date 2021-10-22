@@ -14,20 +14,21 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.*;
 import webgejmikaback.com.programerika.model.PlayerScore;
-import webgejmikaback.com.programerika.service.PlayerScoreServiceImpl;
+import webgejmikaback.com.programerika.service.PlayerScoreService;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(value = "/api/v1/")
 public class PlayerScoresController {
 
-    private final PlayerScoreServiceImpl playerScoreService;
+    private final PlayerScoreService playerScoreService;
 
-    public PlayerScoresController(PlayerScoreServiceImpl playerScoreService) {
+    public PlayerScoresController(PlayerScoreService playerScoreService) {
         this.playerScoreService = playerScoreService;
     }
 
