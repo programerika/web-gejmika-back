@@ -51,7 +51,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             p.setScore(p.getScore() + score);
             playerScoresRepository.save(p);
         } else {
-            throw new ScoreOutOfRangeException("Player score is out of range");
+            throw new ScoreOutOfRangeException("Score is out of range");
         }
     }
 
@@ -80,6 +80,6 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     }
 
     private boolean isScoreInRange(int score) {
-        return (score <= maxScore || score >= minScore);
+        return (score <= maxScore && score >= minScore);
     }
 }
