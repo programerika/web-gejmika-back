@@ -16,10 +16,10 @@ import java.util.Optional;
 public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     @Value("${config-params.min-score}")
-    public int minScore;
+    private int minScore;
 
     @Value("${config-params.max-score}")
-    public int maxScore;
+    private int maxScore;
 
     private final PlayerScoresRepository playerScoresRepository;
 
@@ -51,7 +51,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             p.setScore(p.getScore() + score);
             playerScoresRepository.save(p);
         } else {
-            throw new ScoreOutOfRangeException("Player score is out of range");
+            throw new ScoreOutOfRangeException("Score is out of range");
         }
     }
 
@@ -79,7 +79,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         }
     }
 
-    public boolean isScoreInRange(int score) {
-        return (score <= 21 && score >= 8);
+    private boolean isScoreInRange(int score) {
+        return (score <= maxScore && score >= minScore);
     }
 }
