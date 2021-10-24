@@ -14,7 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.*;
 import webgejmikaback.com.programerika.model.PlayerScore;
-import webgejmikaback.com.programerika.service.PlayerScoreServiceImpl;
+import webgejmikaback.com.programerika.service.PlayerScoreService;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -25,9 +25,9 @@ import java.util.*;
 @RequestMapping(value = "/api/v1/")
 public class PlayerScoresController {
 
-    private final PlayerScoreServiceImpl playerScoreService;
+    private final PlayerScoreService playerScoreService;
 
-    public PlayerScoresController(PlayerScoreServiceImpl playerScoreService) {
+    public PlayerScoresController(PlayerScoreService playerScoreService) {
         this.playerScoreService = playerScoreService;
     }
 

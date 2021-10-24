@@ -16,10 +16,10 @@ import java.util.Optional;
 public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     @Value("${config-params.min-score}")
-    private int minScore;
+    public int minScore;
 
     @Value("${config-params.max-score}")
-    private int maxScore;
+    public int maxScore;
 
     private final PlayerScoresRepository playerScoresRepository;
 
@@ -79,7 +79,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         }
     }
 
-    private boolean isScoreInRange(int score) {
-        return (score <= maxScore || score >= minScore);
+    public boolean isScoreInRange(int score) {
+        return (score <= 21 && score >= 8);
     }
 }
