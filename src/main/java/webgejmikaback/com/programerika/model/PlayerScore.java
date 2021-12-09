@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "lll")
+@Document(collection = "scores")
 public class PlayerScore {
     @Id
     @JsonIgnore

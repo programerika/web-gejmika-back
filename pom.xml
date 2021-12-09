@@ -102,7 +102,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>web-gejmika-back</finalName>
 	</build>
 
 </project>
