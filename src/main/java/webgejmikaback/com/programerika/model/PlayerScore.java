@@ -1,5 +1,6 @@
-package webgejmikaback.Model;
+package webgejmikaback.com.programerika.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -14,9 +16,13 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "scores")
-public class Player {
+public class PlayerScore {
     @Id
-    @Pattern(regexp = "(?i)[a-z]{4,6}[0-9]{2}", message = "Username must start with min 4 and max 6 letters, followed by 2 digits")
+    @JsonIgnore
+    private String uid;
+    @Pattern(regexp = "(?i)[a-z0-9]{4,6}[0-9]{2}", message = "Username must start with min 4 and max 6 letters or digits, followed by 2 digits")
+    @NotNull
     private String username;
+    @NotNull
     private Integer score;
 }
