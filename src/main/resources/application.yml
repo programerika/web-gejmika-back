@@ -1,7 +1,9 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URI}
+      host: localhost
+      port: 27017
+      database: webGejemikaDB
 
 springdoc:
   api-docs:
@@ -16,9 +18,9 @@ management:
         include: "*"
 
 config-params:
-  min-score: ${MIN_SCORE}
-  max-score: ${MAX_SCORE}
-  top-score-players-limit: ${TOP_SCORE_PLAYERS_LIMIT}
+  min-score: 8
+  max-score: 21
+  top-score-players-limit: 10
 
 server:
   error:
