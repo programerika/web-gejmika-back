@@ -1,5 +1,6 @@
 package webgejmikaback.com.programerika.service;
 
+import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.UidNotFoundException;
 import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
 import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
@@ -9,13 +10,13 @@ import java.util.List;
 
 public interface PlayerScoreService {
 
-    PlayerScore savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException;
+    PlayerScore savePlayerScore(PlayerScoreDTO playerScoreDTO, String gameId) throws UsernameAlreadyExistsException;
 
-    void addPlayerScore(String username, Integer score) throws UsernameNotFoundException;
+    void addPlayerScore(String username, Integer score,String gameId) throws UsernameNotFoundException;
 
-    List<PlayerScore> getTopScore();
+    List<PlayerScoreDTO> getTopScore(String gameId);
 
-    PlayerScore getByUsername(String username) throws UsernameNotFoundException;
+    PlayerScoreDTO getByUsername(String username, String gameId) throws UsernameNotFoundException;
 
     void delete(String uid) throws UidNotFoundException;
 

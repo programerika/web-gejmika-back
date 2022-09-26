@@ -17,7 +17,7 @@ management:
       exposure:
         include: "*"
 
-cfg-games:
+config-params:
   games:
     gejmika:
       minScore: 8
@@ -28,10 +28,6 @@ cfg-games:
       maxScore: 100
       topScorePlayersLimit: 10
 
-config-params:
-    min-score: 8
-    max-score: 21
-    top-score-players-limit: 10
 
 server:
   error:

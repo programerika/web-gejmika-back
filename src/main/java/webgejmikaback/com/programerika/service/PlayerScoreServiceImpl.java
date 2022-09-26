@@ -1,33 +1,21 @@
 package webgejmikaback.com.programerika.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import webgejmikaback.com.programerika.configmodels.AllAvailableGamesAndTheirLimits;
-import webgejmikaback.com.programerika.exceptions.UidNotFoundException;
-import webgejmikaback.com.programerika.exceptions.UsernameAlreadyExistsException;
-import webgejmikaback.com.programerika.exceptions.UsernameNotFoundException;
-import webgejmikaback.com.programerika.exceptions.ScoreOutOfRangeException;
+import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
+import webgejmikaback.com.programerika.exceptions.*;
 import webgejmikaback.com.programerika.mapper.MapStructMapper;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.repository.PlayerScoresRepository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PlayerScoreServiceImpl implements PlayerScoreService {
 
-    @Value("${config-params.min-score}")
-    private int minScore;
-
-    @Value("${config-params.max-score}")
-    private int maxScore;
-
-
     private final AllAvailableGamesAndTheirLimits allAvailableGamesAndTheirLimits;
-
     private final MapStructMapper mapStructMapper;
     private final PlayerScoresRepository playerScoresRepository;
 
@@ -38,60 +26,89 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     }
 
     @Override
-    public PlayerScore savePlayerScore(PlayerScore playerScore) throws UsernameAlreadyExistsException, ScoreOutOfRangeException {
-        Optional<PlayerScore> optional = playerScoresRepository.findByUsername(playerScore.getUsername());
+    public PlayerScore savePlayerScore(PlayerScoreDTO playerScoreDTO, String gameId) throws UsernameAlreadyExistsException, ScoreOutOfRangeException, ProvidedGameNotExistsException {
+
+        if(!checkIfGivenGameExists(gameId)){
+            throw new ProvidedGameNotExistsException("Provided game not exist");
+        }
+
+        Optional<PlayerScore> optional = playerScoresRepository.findByUsername(playerScoreDTO.getUsername());
         if (optional.isPresent()) {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository or input is not correct");
-        } else {
-            if (!isScoreInRange(playerScore.getScore())) {
-                throw new ScoreOutOfRangeException("Score is out of range");
-            }
-            else return playerScoresRepository.save(playerScore);
         }
-    }
 
-    @Override
-    public void addPlayerScore(String username, Integer score) throws UsernameNotFoundException,ScoreOutOfRangeException {
-        Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
-        if (optional.isEmpty()) {
-            throw new UsernameNotFoundException("Username Not Found in the Repository");
-        }
-        PlayerScore p = optional.get();
-        if (isScoreInRange(score)) {
-            p.setScore(p.getScore() + score);
-            playerScoresRepository.save(p);
-        } else {
+        if (!isScoreInRange(playerScoreDTO.getScore(),gameId)) {
             throw new ScoreOutOfRangeException("Score is out of range");
         }
+
+        PlayerScore playerScore = mapStructMapper.dtoToPlayerScore(playerScoreDTO,gameId);
+        return playerScoresRepository.save(playerScore);
     }
 
     @Override
-    public List<PlayerScore> getTopScore() {
+    public void addPlayerScore(String username, Integer score, String gameId) throws UsernameNotFoundException,ScoreOutOfRangeException {
+        if(!checkIfGivenGameExists(gameId)){
+            throw new ProvidedGameNotExistsException("Provided game not exists");
+        }
 
-        PlayerScore playerScore = new PlayerScore();
-        playerScore.setUsername("Baki12");
-        playerScore.setScore(21);
-        Map<String,Integer> map = new HashMap<>();
-        map.put("gejmika",21);
-        playerScore.setScores(map);
-
-        mapStructMapper.playerScoreToDTO(playerScore, "gejmika");
-
-        System.out.println(allAvailableGamesAndTheirLimits.getGames().keySet());
-        System.out.println(allAvailableGamesAndTheirLimits.getGames().values());
-        allAvailableGamesAndTheirLimits.getGames().values().forEach(t -> System.out.println(t.getMinScore()));
-
-        return playerScoresRepository.getTopScore();
-    }
-
-    @Override
-    public PlayerScore getByUsername(String username) throws UsernameNotFoundException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
         if (optional.isEmpty()) {
             throw new UsernameNotFoundException("Username Not Found in the Repository");
-        }else {
-            return optional.get();
         }
+
+        if(!isScoreInRange(score,gameId)){
+            throw new ScoreOutOfRangeException("Score is out of range");
+        }
+
+        PlayerScore p = optional.get();
+
+        if (p.getScores().containsKey(gameId)){
+            // This if statement has been added as support purpose for version 1.0.0 of web-gejmika project
+            if(gameId.equals("gejmika")){
+                p.setScore(p.getScore() + score);
+                p.getScores().put(gameId,p.getScores().get(gameId) + score);
+                playerScoresRepository.save(p);
+            }else{
+                p.getScores().put(gameId,p.getScores().get(gameId) + score);
+                playerScoresRepository.save(p);
+            }
+        }else{
+            // This if statement has been added as support purpose for version 1.0.0 of web-gejmika project
+            if(gameId.equals("gejmika")) {
+                p.setScore(score);
+            }
+            p.getScores().put(gameId,score);
+            playerScoresRepository.save(p);
+        }
+    }
+
+    @Override
+    public List<PlayerScoreDTO> getTopScore(String gameId) throws ProvidedGameNotExistsException{
+        if(!checkIfGivenGameExists(gameId)){
+            throw new ProvidedGameNotExistsException("Provided game not exists");
+        }
+
+        Integer limit = allAvailableGamesAndTheirLimits.getGames().get(gameId).getTopScorePlayersLimit();
+        List<PlayerScore> playerScores = playerScoresRepository.getTopScore(gameId,limit);
+
+        return playerScores.stream().map(p -> mapStructMapper.playerScoreToDTO(p,gameId)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PlayerScoreDTO getByUsername(String username, String gameId) throws UsernameNotFoundException {
+        Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
+
+        if (optional.isEmpty()) {
+            throw new UsernameNotFoundException("Username Not Found in the Repository");
+        }
+
+        PlayerScore p = optional.get();
+        if(!p.getScores().containsKey(gameId)){
+            throw new UserDoesNotHaveScoreForProvidedGameException("User hasn't played provided game yet");
+        }
+
+        return mapStructMapper.playerScoreToDTO(optional.get(),gameId);
+
     }
 
     @Override
@@ -103,7 +120,15 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         }
     }
 
-    private boolean isScoreInRange(int score) {
-        return (score <= maxScore && score >= minScore);
+    private boolean isScoreInRange(int score, String gameId) {
+        Integer minScoreOfCurrentGame = allAvailableGamesAndTheirLimits.getGames().get(gameId).getMinScore();
+        Integer maxScoreOfCurrentGame = allAvailableGamesAndTheirLimits.getGames().get(gameId).getMaxScore();
+
+        return (score <= maxScoreOfCurrentGame && score >= minScoreOfCurrentGame);
     }
+
+    private boolean checkIfGivenGameExists(String game){
+        return allAvailableGamesAndTheirLimits.getGames().containsKey(game);
+    }
+
 }

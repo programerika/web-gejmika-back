@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "cfg-games")
+@ConfigurationProperties(prefix = "config-params")
 public class AllAvailableGamesAndTheirLimits {
 
     private Map<String, GameScoreLimit> games;

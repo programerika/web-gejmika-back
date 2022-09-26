@@ -5,5 +5,5 @@ import webgejmikaback.com.programerika.model.PlayerScore;
 import java.util.List;
 
 public interface PlayerScoreRepositoryTopScore {
-    List<PlayerScore> getTopScore();
+    List<PlayerScore> getTopScore(String gameId, Integer limit);
 }

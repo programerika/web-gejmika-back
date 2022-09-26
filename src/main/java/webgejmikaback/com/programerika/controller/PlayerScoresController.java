@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import webgejmikaback.com.programerika.dto.PlayerScoreUidDTO;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.*;
 import webgejmikaback.com.programerika.model.PlayerScore;
@@ -40,7 +41,7 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "player-scores/{uid}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(name = "uid") String uid) throws UidNotFoundException {
@@ -53,15 +54,15 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Success",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "player-scores/{username}", method = RequestMethod.GET)
-    public ResponseEntity<?> getPlayerByUserName(@PathVariable(name = "username") String username) throws UsernameNotFoundException {
-            Optional<PlayerScore> optional = Optional.ofNullable(playerScoreService.getByUsername(username));
+    public ResponseEntity<?> getPlayerByUserName(@PathVariable(name = "username") String username, @RequestHeader(value = "gameId", required = false, defaultValue = "gejmika") String gameId) throws UsernameNotFoundException {
+            Optional<PlayerScoreDTO> optional = Optional.ofNullable(playerScoreService.getByUsername(username,gameId));
             return ResponseEntity.of(optional);
     }
 
@@ -70,30 +71,30 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "201",
                     description = "Created",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))},
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreUidDTO.class))},
                     headers = {@Header(name = "Location")}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreUidDTO.class))}),
             @ApiResponse(
                     responseCode = "406",
                     description = "Not Acceptable",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))}),
             @ApiResponse(
                     responseCode = "409",
                     description = "Conflict",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreUidDTO.class))})
     })
     @RequestMapping(value = "player-scores", method = RequestMethod.POST)
-    public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScore playerScore,BindingResult result) throws UsernameAlreadyExistsException, UsernameBadValidationException, ScoreOutOfRangeException {
+    public ResponseEntity<?> savePlayerScore(@Valid @RequestBody PlayerScoreDTO playerScoreDTO, BindingResult result, @RequestHeader(value = "gameId",required = false,defaultValue = "gejmika") String gameId) throws UsernameAlreadyExistsException, UsernameBadValidationException, ScoreOutOfRangeException {
         if (result.hasErrors()){
             FieldError fieldError = result.getFieldError();
             assert fieldError != null;
             throw new UsernameBadValidationException(fieldError.getDefaultMessage());
         }
-        PlayerScoreDTO dto = new PlayerScoreDTO();
-            PlayerScore ps = playerScoreService.savePlayerScore(playerScore);
+        PlayerScoreUidDTO dto = new PlayerScoreUidDTO();
+            PlayerScore ps = playerScoreService.savePlayerScore(playerScoreDTO,gameId);
         dto.setId(ps.getUid());
         URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
@@ -112,15 +113,15 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Not Found",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))}),
             @ApiResponse(
                     responseCode = "406",
                     description = "Not Acceptable",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "player-scores/{username}/add-score", method = RequestMethod.POST)
-    public ResponseEntity<?> addScore(@PathVariable(name = "username") String username, @RequestBody Integer score) throws UsernameNotFoundException, ScoreOutOfRangeException {
-            playerScoreService.addPlayerScore(username, score);
+    public ResponseEntity<?> addScore(@PathVariable(name = "username") String username, @RequestBody Integer score, @RequestHeader(value = "gameId", required = false, defaultValue = "gejmika") String gameId) throws UsernameNotFoundException, ScoreOutOfRangeException {
+            playerScoreService.addPlayerScore(username, score,gameId);
             return ResponseEntity.noContent().build();
     }
 
@@ -129,15 +130,15 @@ public class PlayerScoresController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Success",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))}),
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))}),
             @ApiResponse(
                     responseCode = "400",
                     description = "Bad request",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScore.class))})
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "top-score", method = RequestMethod.GET)
-    public ResponseEntity<List<PlayerScore>>  getTopScore() {
-        return ResponseEntity.ok(playerScoreService.getTopScore());
+    public ResponseEntity<List<PlayerScoreDTO>>  getTopScore(@RequestHeader(value = "gameId",required = false,defaultValue = "gejmika") String gameId) {
+        return ResponseEntity.ok(playerScoreService.getTopScore(gameId));
     }
 
 }
