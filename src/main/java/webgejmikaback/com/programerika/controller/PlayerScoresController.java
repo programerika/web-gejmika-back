@@ -137,7 +137,7 @@ public class PlayerScoresController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PlayerScoreDTO.class))})
     })
     @RequestMapping(value = "top-score", method = RequestMethod.GET)
-    public ResponseEntity<List<PlayerScoreDTO>>  getTopScore(@RequestHeader(value = "gameId",required = false,defaultValue = "gejmika") String gameId) {
+    public ResponseEntity<List<PlayerScoreDTO>> getTopScore(@RequestHeader(value = "gameId",required = false,defaultValue = "gejmika") String gameId) {
         return ResponseEntity.ok(playerScoreService.getTopScore(gameId));
     }
 

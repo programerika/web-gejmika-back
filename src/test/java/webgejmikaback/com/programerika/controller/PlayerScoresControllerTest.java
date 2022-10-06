@@ -32,7 +32,7 @@ class PlayerScoresControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Test
+    /*@Test
     @DisplayName("Test savePlayerScore Success")
     void testSavePlayerScoreSuccess() {
         PlayerScore ps = new PlayerScore("UID123", "bole55", 13);
@@ -52,9 +52,9 @@ class PlayerScoresControllerTest {
         ArgumentCaptor<PlayerScore> argument = ArgumentCaptor.forClass(PlayerScore.class);
         Mockito.verify(playerScoreService).savePlayerScore(argument.capture());
         assertEquals(argument.getValue().getUsername(),ps.getUsername());
-    }
+    }*/
 
-    @Test
+/*    @Test
     @DisplayName("Test savePlayerScore throws an exception for field bad validation")
     void testSavePlayerScoreThrowsAnException_For_FieldBadValidation() throws Exception {
         PlayerScore ps = new PlayerScore("testUID", "bole555a", 13);
@@ -68,5 +68,5 @@ class PlayerScoresControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.type", Matchers.is("UsernameBadValidationException")));
-    }
+    }*/
 }

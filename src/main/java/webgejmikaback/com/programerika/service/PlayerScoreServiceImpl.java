@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import webgejmikaback.com.programerika.configmodels.AllAvailableGamesAndTheirLimits;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.*;
-import webgejmikaback.com.programerika.mapper.MapStructMapper;
+import webgejmikaback.com.programerika.mapper.PlayerScoreConverter;
 import webgejmikaback.com.programerika.model.PlayerScore;
 import webgejmikaback.com.programerika.repository.PlayerScoresRepository;
 
@@ -16,50 +16,48 @@ import java.util.stream.Collectors;
 public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     private final AllAvailableGamesAndTheirLimits allAvailableGamesAndTheirLimits;
-    private final MapStructMapper mapStructMapper;
+    private final PlayerScoreConverter playerScoreConverter;
     private final PlayerScoresRepository playerScoresRepository;
 
-    public PlayerScoreServiceImpl(PlayerScoresRepository playerScoresRepository, AllAvailableGamesAndTheirLimits allAvailableGamesAndTheirLimits, MapStructMapper mapStructMapper) {
+    public PlayerScoreServiceImpl(PlayerScoresRepository playerScoresRepository, AllAvailableGamesAndTheirLimits allAvailableGamesAndTheirLimits, PlayerScoreConverter playerScoreConverter) {
         this.playerScoresRepository = playerScoresRepository;
         this.allAvailableGamesAndTheirLimits = allAvailableGamesAndTheirLimits;
-        this.mapStructMapper= mapStructMapper;
+        this.playerScoreConverter = playerScoreConverter;
     }
 
     @Override
     public PlayerScore savePlayerScore(PlayerScoreDTO playerScoreDTO, String gameId) throws UsernameAlreadyExistsException, ScoreOutOfRangeException, ProvidedGameNotExistsException {
-
-        if(!checkIfGivenGameExists(gameId)){
-            throw new ProvidedGameNotExistsException("Provided game not exist");
-        }
 
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(playerScoreDTO.getUsername());
         if (optional.isPresent()) {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository or input is not correct");
         }
 
-        if (!isScoreInRange(playerScoreDTO.getScore(),gameId)) {
+        if (isScoreInRange(playerScoreDTO.getScore(), gameId)) {
             throw new ScoreOutOfRangeException("Score is out of range");
         }
 
-        PlayerScore playerScore = mapStructMapper.dtoToPlayerScore(playerScoreDTO,gameId);
+        if(checkIfGivenGameExists(gameId)){
+            throw new ProvidedGameNotExistsException("Provided game not exist");
+        }
+
+        PlayerScore playerScore = playerScoreConverter.dtoToPlayerScore(playerScoreDTO,gameId);
         return playerScoresRepository.save(playerScore);
     }
 
     @Override
-    public void addPlayerScore(String username, Integer score, String gameId) throws UsernameNotFoundException,ScoreOutOfRangeException {
-        if(!checkIfGivenGameExists(gameId)){
-            throw new ProvidedGameNotExistsException("Provided game not exists");
-        }
+    public void addPlayerScore(String username, Integer score, String gameId) throws UsernameNotFoundException,ScoreOutOfRangeException, ProvidedGameNotExistsException{
 
-        Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
-        if (optional.isEmpty()) {
-            throw new UsernameNotFoundException("Username Not Found in the Repository");
-        }
+        Optional<PlayerScore> optional = Optional.ofNullable(playerScoresRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username Not Found in the Repository")));
 
-        if(!isScoreInRange(score,gameId)){
+        if(isScoreInRange(score, gameId)){
             throw new ScoreOutOfRangeException("Score is out of range");
         }
 
+        if(checkIfGivenGameExists(gameId)){
+            throw new ProvidedGameNotExistsException("Provided game not exists");
+        }
         PlayerScore p = optional.get();
 
         if (p.getScores().containsKey(gameId)){
@@ -84,21 +82,21 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
 
     @Override
     public List<PlayerScoreDTO> getTopScore(String gameId) throws ProvidedGameNotExistsException{
-        if(!checkIfGivenGameExists(gameId)){
+        if(checkIfGivenGameExists(gameId)){
             throw new ProvidedGameNotExistsException("Provided game not exists");
         }
 
         Integer limit = allAvailableGamesAndTheirLimits.getGames().get(gameId).getTopScorePlayersLimit();
         List<PlayerScore> playerScores = playerScoresRepository.getTopScore(gameId,limit);
 
-        return playerScores.stream().map(p -> mapStructMapper.playerScoreToDTO(p,gameId)).collect(Collectors.toList());
+        return playerScores.stream().map(p -> playerScoreConverter.playerScoreToDTO(p,gameId)).collect(Collectors.toList());
     }
 
     @Override
     public PlayerScoreDTO getByUsername(String username, String gameId) throws UsernameNotFoundException {
         Optional<PlayerScore> optional = playerScoresRepository.findByUsername(username);
 
-        if (optional.isEmpty()) {
+        if (!optional.isPresent()) {
             throw new UsernameNotFoundException("Username Not Found in the Repository");
         }
 
@@ -107,7 +105,7 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             throw new UserDoesNotHaveScoreForProvidedGameException("User hasn't played provided game yet");
         }
 
-        return mapStructMapper.playerScoreToDTO(optional.get(),gameId);
+        return playerScoreConverter.playerScoreToDTO(p,gameId);
 
     }
 
@@ -124,11 +122,11 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         Integer minScoreOfCurrentGame = allAvailableGamesAndTheirLimits.getGames().get(gameId).getMinScore();
         Integer maxScoreOfCurrentGame = allAvailableGamesAndTheirLimits.getGames().get(gameId).getMaxScore();
 
-        return (score <= maxScoreOfCurrentGame && score >= minScoreOfCurrentGame);
+        return (score > maxScoreOfCurrentGame || score < minScoreOfCurrentGame);
     }
 
     private boolean checkIfGivenGameExists(String game){
-        return allAvailableGamesAndTheirLimits.getGames().containsKey(game);
+        return !allAvailableGamesAndTheirLimits.getGames().containsKey(game);
     }
 
 }
