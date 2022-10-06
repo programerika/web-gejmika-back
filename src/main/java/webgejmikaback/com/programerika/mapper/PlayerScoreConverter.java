@@ -9,8 +9,7 @@ import java.util.Map;
 
 
 @Component
-public class MapStructMapperImpl implements MapStructMapper {
-    @Override
+public class PlayerScoreConverter {
     public PlayerScore dtoToPlayerScore(PlayerScoreDTO playerScoreDTO, String gameId) {
 
         PlayerScore playerScore = new PlayerScore();
@@ -28,7 +27,6 @@ public class MapStructMapperImpl implements MapStructMapper {
         return playerScore;
     }
 
-    @Override
     public PlayerScoreDTO playerScoreToDTO(PlayerScore playerScore, String gameId) {
 
         PlayerScoreDTO playerScoreDTO = new PlayerScoreDTO();
