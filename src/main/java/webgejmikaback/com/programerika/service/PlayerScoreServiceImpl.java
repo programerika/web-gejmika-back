@@ -2,6 +2,7 @@ package webgejmikaback.com.programerika.service;
 
 import org.springframework.stereotype.Service;
 import webgejmikaback.com.programerika.configmodels.AllAvailableGamesAndTheirLimits;
+import webgejmikaback.com.programerika.configmodels.GameScoreLimit;
 import webgejmikaback.com.programerika.dto.PlayerScoreDTO;
 import webgejmikaback.com.programerika.exceptions.*;
 import webgejmikaback.com.programerika.mapper.PlayerScoreConverter;
@@ -119,10 +120,8 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
     }
 
     private boolean isScoreInRange(int score, String gameId) {
-        Integer minScoreOfCurrentGame = allAvailableGamesAndTheirLimits.getGames().get(gameId).getMinScore();
-        Integer maxScoreOfCurrentGame = allAvailableGamesAndTheirLimits.getGames().get(gameId).getMaxScore();
-
-        return (score > maxScoreOfCurrentGame || score < minScoreOfCurrentGame);
+        GameScoreLimit gameScoreLimit = allAvailableGamesAndTheirLimits.getGames().get(gameId);
+        return (score > gameScoreLimit.getMaxScore() || score < gameScoreLimit.getMinScore());
     }
 
     private boolean checkIfGivenGameExists(String game){
