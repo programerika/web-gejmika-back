@@ -16,7 +16,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "scoresTestWithMap")
+@Document(collection = "scores")
 public class PlayerScore {
     @Id
     @JsonIgnore
