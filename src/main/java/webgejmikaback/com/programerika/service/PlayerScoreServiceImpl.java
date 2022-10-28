@@ -102,9 +102,6 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         }
 
         PlayerScore p = optional.get();
-        if(!p.getScores().containsKey(gameId)){
-            throw new UserDoesNotHaveScoreForProvidedGameException("User hasn't played provided game yet");
-        }
 
         return playerScoreConverter.playerScoreToDTO(p,gameId);
 
