@@ -106,17 +106,4 @@ public class ApplicationExceptionHandler implements ProblemHandling {
                         .build());
     }
 
-    @ExceptionHandler(UserDoesNotHaveScoreForProvidedGameException.class)
-    public ResponseEntity<Problem> UserDoesNotHaveScoreForProvidedGame(UserDoesNotHaveScoreForProvidedGameException e) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
-                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.PROBLEM_VALUE)
-                .body(Problem
-                        .builder()
-                        .withTitle("Not Acceptable")
-                        .withType(URI.create(e.getClass().getSimpleName()))
-                        .withDetail(e.getMessage())
-                        .withStatus(Status.NOT_ACCEPTABLE)
-                        .build());
-    }
 }
