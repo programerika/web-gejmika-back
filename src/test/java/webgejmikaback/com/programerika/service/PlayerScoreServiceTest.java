@@ -49,19 +49,6 @@ class PlayerScoreServiceTest {
     }
 
     @Test
-    @DisplayName("Test getByUsername should throw UserDoesNotHaveScoreForProvidedGameException")
-    public void testGetByUsernameShouldThrowUserDoesNotHaveScoreForProvidedGameException() {
-        // given
-        String gameId = "nepostojika";
-        // when
-        when(repository.findByUsername(createPlayerScore().getUsername())).thenReturn(Optional.of(createPlayerScore()));
-        // then
-        assertThrows(UserDoesNotHaveScoreForProvidedGameException.class, () ->
-                serviceUnderTest.getByUsername(createPlayerScore().getUsername(), gameId));
-        verify(repository, times(1)).findByUsername(createPlayerScore().getUsername());
-    }
-
-    @Test
     @DisplayName("Test getByUsername throws an exception for username is blank or not exists")
     public void testGetByUsernameShouldThrowAnException_For_UsernameIsBlankOrNotExists() {
         // when
