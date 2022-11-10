@@ -34,13 +34,14 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
             throw new UsernameAlreadyExistsException("Username Already Exists in the Repository or input is not correct");
         }
 
+        if(checkIfGivenGameExists(gameId)){
+            throw new ProvidedGameNotExistsException("Provided game not exist");
+        }
+
         if (isScoreInRange(playerScoreDTO.getScore(), gameId)) {
             throw new ScoreOutOfRangeException("Score is out of range");
         }
 
-        if(checkIfGivenGameExists(gameId)){
-            throw new ProvidedGameNotExistsException("Provided game not exist");
-        }
 
         PlayerScore playerScore = playerScoreConverter.dtoToPlayerScore(playerScoreDTO,gameId);
         return playerScoresRepository.save(playerScore);
@@ -52,13 +53,14 @@ public class PlayerScoreServiceImpl implements PlayerScoreService {
         Optional<PlayerScore> optional = Optional.ofNullable(playerScoresRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username Not Found in the Repository")));
 
+        if(checkIfGivenGameExists(gameId)){
+            throw new ProvidedGameNotExistsException("Provided game not exists");
+        }
+
         if(isScoreInRange(score, gameId)){
             throw new ScoreOutOfRangeException("Score is out of range");
         }
 
-        if(checkIfGivenGameExists(gameId)){
-            throw new ProvidedGameNotExistsException("Provided game not exists");
-        }
         PlayerScore p = optional.get();
 
         if (p.getScores().containsKey(gameId)){
