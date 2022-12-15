@@ -1,9 +1,7 @@
 spring:
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: webGejmikaDB
+      uri: ${MONGO_URI}
 
 springdoc:
   api-docs:
@@ -20,13 +18,13 @@ management:
 config-params:
   games:
     gejmika:
-      minScore: 8
-      maxScore: 21
-      topScorePlayersLimit: 10
+      minScore: ${MIN_SCORE_GEJMIKA}
+      maxScore: ${MAX_SCORE_GEJMIKA}
+      topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
     bombika:
-      minScore: 1
-      maxScore: 100
-      topScorePlayersLimit: 10
+      minScore: ${MIN_SCORE_BOMBIKA}
+      maxScore: ${MAX_SCORE_BOMBIKA}
+      topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
 
 
 server:
