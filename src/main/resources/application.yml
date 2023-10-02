@@ -1,7 +1,42 @@
+#spring:
+#  data:
+#    mongodb:
+#      uri: ${MONGO_URI}
+#
+#springdoc:
+#  api-docs:
+#    path: /api-docs
+#  swagger-ui:
+#    path: /swagger-ui-custom.html
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#
+#config-params:
+#  games:
+#    gejmika:
+#      minScore: ${MIN_SCORE_GEJMIKA}
+#      maxScore: ${MAX_SCORE_GEJMIKA}
+#      topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
+#    bombika:
+#      minScore: ${MIN_SCORE_BOMBIKA}
+#      maxScore: ${MAX_SCORE_BOMBIKA}
+#      topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
+#
+#
+#server:
+#  error:
+#    include-stacktrace: never
+#    include-exception: false
+
+
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URI}
+      uri: "mongodb://localhost:27017/webSubSearchika"
 
 springdoc:
   api-docs:
@@ -18,13 +53,17 @@ management:
 config-params:
   games:
     gejmika:
-      minScore: ${MIN_SCORE_GEJMIKA}
-      maxScore: ${MAX_SCORE_GEJMIKA}
-      topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
+      minScore: 0
+      maxScore: 100
+      topScorePlayersLimit: 10
     bombika:
-      minScore: ${MIN_SCORE_BOMBIKA}
-      maxScore: ${MAX_SCORE_BOMBIKA}
-      topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
+      minScore: 0
+      maxScore: 100
+      topScorePlayersLimit: 10
+    subsearchika:
+      minScore: 0
+      maxScore: 200
+      topScorePlayersLimit: 10
 
 
 server:
