@@ -25,7 +25,10 @@ config-params:
       minScore: ${MIN_SCORE_BOMBIKA}
       maxScore: ${MAX_SCORE_BOMBIKA}
       topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
-
+    breakout:
+      minScore: ${MIN_SCORE_BREAKOUT}
+      maxScore: ${MAX_SCORE_BREAKOUT}
+      topScorePlayersLimit: ${TOP_SCORE_PLAYERS_LIMIT}
 
 server:
   error:
